@@ -1,0 +1,14 @@
+Django==2.2
+djangorestframework==3.8.2
+jsonfield==2.0.2
+numpy==1.17.3
+google-pasta==0.1.6
+opencv-python==3.4.8.29
+Pillow==6.2.0
+psycopg2-binary==2.8.5
+pytz==2018.4
+cython
+scikit-learn==0.22.2
+tornado==5.0.2
+jinja2
+pycurl
