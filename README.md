@@ -9,7 +9,7 @@ A PACS server based on Python and React
 2. 运行install_and_run.sh  
 
     **`sh install_and_run.sh`**
-3. 新建一个终端进入pacs（客户端）目录
+3. 在终端进入pacs（客户端）目录
 
     **`cd pacs`**
 4. 在终端依次输入以下命令
