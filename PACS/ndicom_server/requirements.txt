@@ -1,10 +1,10 @@
-Django==2.2
-djangorestframework==3.8.2
+Django==2.2.10
+djangorestframework==3.9.1
 jsonfield==2.0.2
 numpy==1.17.3
 google-pasta==0.1.6
 opencv-python==3.4.8.29
-Pillow==6.2.0
+Pillow==6.2.2
 psycopg2-binary==2.8.5
 pytz==2018.4
 cython
