@@ -6,6 +6,9 @@ const SERIES_ROOT_URL = '/api/series';
 const INSTANCES_ROOT_URL = '/api/instances';
 
 export default class DicomService {
+    constructor(props) {
+        this.setState.bind(this);
+    }
     static findPatients(f, params = {}) {
         fetch(
             `${PATIENTS_ROOT_URL}?${queryString.stringify(params)}`
@@ -18,7 +21,7 @@ export default class DicomService {
             error.status = response.statusText;
             error.response = response;
             throw error;
-        }).then(response => {
+        }).then(response => { 
             return response.json();
         }).then(f);
     }
@@ -147,6 +150,7 @@ export default class DicomService {
             `${SERIES_ROOT_URL}/${seriesId}/instances`
         ).then(function (response) {
             if (response.status >= 200 && response.status < 300) {
+                console.log("找到的instances",response)
                 return response;
             }
             console.log(response.status);
@@ -155,7 +159,9 @@ export default class DicomService {
             error.response = response;
             throw error;
         }).then(response => {
-            return response.json();
+            const resp =  response.json()
+            console.log("找到的instances",resp)
+            return resp;
         }).then(f);
     }
 

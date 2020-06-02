@@ -17,7 +17,7 @@ class StudySeriesTable extends Component {;
         console.log("获取到的类型", typeof(study))
         return (
             <div>
-                {/* <p>{study.patient_name}</p >              */}
+                {/* <p>{study.patient_name}</p>              */}
                 <Layout>
                     <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
                         <div className="logo" />

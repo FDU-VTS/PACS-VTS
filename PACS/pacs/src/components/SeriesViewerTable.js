@@ -12,6 +12,7 @@ import {
     DownOutlined
   } from '@ant-design/icons';
 import {Link} from "react-router-dom";
+import DicomViewer from './DicomViewer';
 
 // http://315v841f37.zicp.vip/
 const menu = (
@@ -37,6 +38,18 @@ class SeriesViewerTable extends React.Component {
     constructor(props) {
         super(props);
         this.setState.bind(this);
+        this.onNextInstance = this.props.onNextInstance || function () {
+        };
+        this.onPrevInstance = this.props.onPrevInstance || function () {
+        };
+        this.onZoomin = this.props.onZoomin || function () {
+        };
+        this.onZoomout = this.props.onZoomout || function () {
+        };
+        this.onRotateLeft = this.props.onRotateLeft || function () {
+        };
+        this.onRotateRight = this.props.onRotateRight || function () {
+        };
       }
       
       render() {
@@ -51,8 +64,8 @@ class SeriesViewerTable extends React.Component {
                 <Link to='/studies'>
                     <BankOutlined style={buttonstyle}/>               
                 </Link>
-                <ArrowLeftOutlined style={buttonstyle}/>
-                <ArrowRightOutlined style={buttonstyle}/>
+                <ArrowLeftOutlined style={buttonstyle} onClick={this.onPrevInstance}/>
+                <ArrowRightOutlined style={buttonstyle} onClick={this.onNextInstance}/>
                 <Dropdown overlay={menu}>
                     <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={searchstyle}>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;广告位招租1<DownOutlined style={searchbuttonstyle}/>
@@ -71,19 +84,21 @@ class SeriesViewerTable extends React.Component {
                     &nbsp;&nbsp;&nbsp;&nbsp;</a>
                 </Dropdown>
                 <CaretRightOutlined style={buttonstyle}/>
-                <ZoomInOutlined style={buttonstyle}/>
-                <ZoomOutOutlined style={buttonstyle}/>
+                <ZoomInOutlined style={buttonstyle} onClick={this.onZoomin}/>
+                <ZoomOutOutlined style={buttonstyle} onClick={this.onZoomout}/>
                 <Dropdown overlay={menu}>
                     <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={{color:"white",
                 fontSize:"25px"}}>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;广告位招租4<DownOutlined style={searchbuttonstyle}/>
                     &nbsp;&nbsp;&nbsp;&nbsp;</a>
                 </Dropdown>
-                <RedoOutlined style={buttonstyle}/>
-                <UndoOutlined style={buttonstyle}/>
+                <RedoOutlined style={buttonstyle} onClick={this.onRotateLeft}/>
+                <UndoOutlined style={buttonstyle} onClick={this.onRotateRight}/>
               </Header>
               <Content>
-
+                <br></br>
+                <br></br>
+                <br></br>
               </Content>
             </Layout>
             

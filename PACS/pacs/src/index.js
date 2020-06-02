@@ -4,26 +4,26 @@ import {createStore, combineReducers} from 'redux';
 import {Provider} from 'react-redux';
 import {localeReducer as locale, initialize, addTranslation} from 'react-localize-redux';
 import {BrowserRouter, Route} from 'react-router-dom';
-import StudiesPage from "./pages/StudiesPage";
-import PatientsPage from "./pages/PatientsPage";
-import StudySeriesPage from "./pages/StudySeriesPage";
-import SeriesViewerPage from "./pages/SeriesViewerPage";
-import Three from "./pages/Three"
+import StudiesPage from "./pages/StudiesPage"
+import PatientsPage from "./pages/PatientsPage"
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-
+import StudySeriesPage from "./pages/StudySeriesPage"
+import Three from "./pages/Three"
+import SeriesViewerPage from "./pages/SeriesViewerPage"
 const store = createStore(combineReducers({locale}));
 
-ReactDOM.render(                                                      
+ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
       <div>
         <Route exact path='/studies' component={StudiesPage}/>
         <Route path='/patients' component={PatientsPage}/>
+        <Route path='/app' component={App}/>
         <Route path='/studies/:id' component={StudySeriesPage}/>
-        <Route path='/seriesviewer' component={SeriesViewerPage}/>
-        <Route path='/three' component={Three}/>
+        <Route path='/series/:id' component={SeriesViewerPage}/>
+        <Route path='/threetest' component={Three}/>
       </div>
       </BrowserRouter>
   </Provider>,
@@ -34,3 +34,4 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+ // "proxy": "http://315v841f37.zicp.vip/",

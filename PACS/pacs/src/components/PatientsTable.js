@@ -151,7 +151,7 @@ class PatientsTable extends React.Component {
               <Table columns={columns} dataSource={this.props.data} />
             </div>
           </Content>
-          <Footer style={{ textAlign: 'center' }}>PACS-VTS</Footer>
+          <Footer style={{ textAlign: 'center' }}>2020 PACS-VTS</Footer>
         </Layout>
         
       </div>
