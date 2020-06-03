@@ -6,7 +6,7 @@ numpy==1.17.3
 opencv_python==3.4.8.29
 dipy==1.1.1
 pynetdicom==1.5.0.dev0
-Django==2.2
+Django==2.2.10
 django_jsonfield==1.4.0
 djangorestframework==3.11.0
 Pillow==7.1.2
