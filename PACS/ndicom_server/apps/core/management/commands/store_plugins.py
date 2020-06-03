@@ -11,15 +11,12 @@ class Command(BaseCommand):
     help = "Install plugins"
 
     def _store(self, name, is_native=False):
+        self.stdout.write(name)
         if not os.path.exists(name):
             return
-        if os.path.isfile(name) and zipfile.is_zipfile(name):
+        if os.path.isdir(name):
             PluginSaver.save(fp=name, is_native=is_native)
             self.stdout.write('%s stored' % name)
-        elif os.path.isdir(name):
-            files = [os.path.join(name, f) for f in os.listdir(name)]
-            for f in files:
-                self._store(f)
         return
 
     def add_arguments(self, parser: CommandParser):

@@ -36,8 +36,8 @@ class PatientListHandler(ListHandler):
 
 
 # GET /api/patients/:id
-@required_auth(methods=['GET'])
-class PatientDetailHandler(RetrieveHandler):
+@required_auth(methods=['GET', 'DELETE'])
+class PatientDetailHandler(RetrieveDestroyHandler):
     """
     Return patient by specified id
 
@@ -159,8 +159,8 @@ class SeriesListHandler(ListHandler):
 
 
 # GET /api/series/:id
-@required_auth(methods=['GET'])
-class SeriesDetailHandler(RetrieveHandler):
+@required_auth(methods=['GET', 'DELETE'])
+class SeriesDetailHandler(RetrieveDestroyHandler):
     """ Find series by id
 
     Success
@@ -242,9 +242,9 @@ class InstanceDetailHandler(RetrieveDestroyHandler):
     serializer_class = InstanceDetailSerializer
 
 
-# POST /api/instances/:id/process/by_plugin/:id
+# POST /api/instances/:id/process/by_plugin/:id/json
 @required_auth(methods=['POST'])
-class InstanceProcessHandler(BaseJsonHandler, BaseBytesHandler):
+class InstanceJsonProcessHandler(BaseJsonHandler):
     """ Process an instances with specified plugin (or filter)
 
     Success
@@ -257,22 +257,6 @@ class InstanceProcessHandler(BaseJsonHandler, BaseBytesHandler):
         - 401 - Not authorized user
         - 403 - User has not permissions for retrieving patients
     """
-
-    # def prepare(self):
-    #     super(BaseNeurDicomHandler, self).prepare()
-    #     if self.request.body:
-    #         try:
-    #             json_data = json.loads(self.request.body)
-    #             self.request.arguments.update(json_data)
-    #         except ValueError:
-    #             self.send_error(400, message='Body is not JSON deserializable')
-    #
-    # def _convert(self, v, t):
-    #     if t == 'int':
-    #         return int(v)
-    #     else:
-    #         return float(v)
-
     @gen.coroutine
     def post(self, instance_id, by_plugin_id, *args, **kwargs):
         instance = Instance.objects.get(pk=instance_id)
@@ -280,30 +264,44 @@ class InstanceProcessHandler(BaseJsonHandler, BaseBytesHandler):
         params = self.request.arguments
         with ImageProcessor(plugin) as processor:
             result = processor.process(instance, **params)
-
-        # for k in plugin.params:
-        #     if plugin.params[k].get('is_array', False):
-        #         v = self.get_query_arguments(k, None)
-        #     else:
-        #         v = self.get_query_argument(k, None)
-        #     if v is not None:
-        #         if isinstance(v, list) or isinstance(v, tuple):
-        #             params[k] = [self._convert(item, plugin.params[k]['type']) for item in v]
-        #         else:
-        #             params[k] = self._convert(v, plugin.params[k]['type'])
-
-        if plugin.result['type'] == 'IMAGE':
-            if isinstance(result, BytesIO):
-                result = result.getvalue()
-            else:
-                result = convert_to_8bit(result).tobytes()
-            yield BaseBytesHandler.write(self, result)
-        elif plugin.result['type'] == 'JSON':
+        res_name = str(plugin.name)+str(instance_id)
+        if plugin.result['type'] == 'JSON':
             if isinstance(result, dict):
                 result = json.dumps(result)
-            yield BaseJsonHandler.write(self, result)
+            yield self.write(self, result)
         else:
-            self.send_error(500, message='Unknown result type')
+            yield self.send_error(500, message='result type is not Json')
+
+
+# POST /api/instances/:id/process/by_plugin/:id/image
+@required_auth(methods=['POST'])
+class InstanceImgProcessHandler(BaseDicomImageHandler):
+    """ Process an instances with specified plugin (or filter)
+
+    Success
+
+        - 200 - OK
+
+    Failure
+        - 404 - Instance or plugin were not found
+        - 500 - Process error
+        - 401 - Not authorized user
+        - 403 - User has not permissions for retrieving patients
+    """
+    @gen.coroutine
+    def post(self, instance_id, by_plugin_id, *args, **kwargs):
+        instance = Instance.objects.get(pk=instance_id)
+        plugin = Plugin.objects.get(pk=by_plugin_id)
+        params = self.request.arguments
+        with ImageProcessor(plugin) as processor:
+            result = processor.process(instance, **params)
+        res_name = str(plugin.name)+str(instance_id)
+        if plugin.result['type'] == 'IMAGE':
+            print(res_name)
+            result = convert_array_to_img(result, res_name)
+            yield self.write(result)
+        else:
+            yield self.send_error(500, message='result type is not image')
 
 
 # GET /api/instances/:id/tags
@@ -347,7 +345,7 @@ class InstanceImageHandler(BaseDicomImageHandler):
     def get(self, instance_id, *args, **kwargs):
         instance = Instance.objects.get(pk=instance_id)
         ds = read_file(instance.image.path)
-        yield self.write(ds)
+        yield BaseDicomImageHandler.write(self, ds)
 
 
 # GET /api/instances/:id/raw
@@ -373,6 +371,8 @@ class InstanceRawHandler(BaseBytesHandler):
             yield self.write(convert_to_8bit(read_file(instance.image).pixel_array).tobytes())
         else:
             yield self.write(read_file(instance.image).PixelData)
+
+
 # GET /api/plugins
 
 
@@ -396,7 +396,8 @@ class PluginListHandler(ListHandler):
         plugins = serializer.data
         self.write(plugins)
 
-    # GET /api/plugins/:id
+
+# GET /api/plugins/:id
 
 
 @required_auth(methods=['GET', 'DELETE'])
@@ -428,14 +429,6 @@ class PluginDetailHandler(RetrieveDestroyHandler):
         self.write({
             'message': 'Plugin %s was removed' % plugin
         })
-
-
-@required_auth(methods=['POST'])
-@render_exception
-class InstallPluginHandler(CreateHandlerMixin):
-    def post(self, plugin_name, *args, **kwargs):
-        plugin = install_from_pypi(plugin_name)
-        self.write(PluginSerializer(plugin).data)
 
 
 class DICOMServer(netdicom.AE):

@@ -8,13 +8,12 @@ echo "PostgreSQL launched"
 
 sleep 10
 echo "Migrate database"
-python ./manage.py makemigrations
-python ./manage.py migrate
+#python ./manage.py makemigrations
+#python ./manage.py migrate
 echo "Store DICOM images"
-python ./manage.py clear_dicom
-python ./manage.py store_dicom ../images
+#python ./manage.py clear_dicom
+#python ./manage.py store_dicom ../images
 python app.py &
-
 
 nc -z localhost 8080
 
