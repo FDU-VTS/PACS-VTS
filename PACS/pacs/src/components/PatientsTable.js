@@ -124,7 +124,7 @@ class PatientsTable extends React.Component {
         title: 'Images Count',
         dataIndex: 'images_count',
         key: 'images_count',
-        ...this.getColumnSearchProps('images_count'),
+        //...this.getColumnSearchProps('images_count'),
       },
     ];
     const { Header, Content, Footer } = Layout;

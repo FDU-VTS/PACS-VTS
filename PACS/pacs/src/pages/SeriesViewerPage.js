@@ -21,7 +21,8 @@ class SeriesViewerPage extends Component {
             viewMode: 'one',
             animationId: undefined,
             ifzoom: null,
-            flagzoom:false
+            flagzoom:false,
+            ifplay:false
         };
         this.setState = this.setState.bind(this);
     }
@@ -48,6 +49,7 @@ class SeriesViewerPage extends Component {
             this.setState({index: 0, rotation: null});
         else
             this.setState({index: currentInstanceId + 1, rotation: null});
+        this.setState({flagzoom: false});
     };
 
     prevInstance = () => {
@@ -61,6 +63,22 @@ class SeriesViewerPage extends Component {
         else {
             this.setState({index: currentInstanceId - 1, rotation: null});
         }
+        this.setState({flagzoom: false});
+    };
+
+    play = () => {
+        if(!this.state.ifplay){
+            this.setState({ifplay:true});  
+            this.setState({flagzoom: false});      
+            this.timer = setInterval(() => {(
+                this.nextInstance()
+                )
+            }, 1000);
+        }
+        else{
+            clearInterval(this.timer);
+            this.setState({ifplay:false})}
+        this.setState({flagzoom: false});
     };
 
     zoomin = () => {
@@ -95,14 +113,15 @@ class SeriesViewerPage extends Component {
             colorScale: this.state.colorScale,
             rotation:this.state.rotation,
             ifzoom:this.state.ifzoom,
-            flagzoom:this.state.flagzoom
+            flagzoom:this.state.flagzoom,
+            ifplay:this.state.ifplay
         };
         
         return (
             <div>
                 {/* 把一个instance传过去 */}
                 <SeriesViewerTable onPrevInstance={this.prevInstance} onNextInstance={this.nextInstance} 
-                onZoomin={this.zoomin} onZoomout={this.zoomout}
+                onPlay={this.play} onZoomin={this.zoomin} onZoomout={this.zoomout}
                 onRotateLeft={this.rotateLeft} onRotateRight={this.rotateRight}/>
                 <DicomViewer instance={instance} {...viewerProps}/>
             </div>
