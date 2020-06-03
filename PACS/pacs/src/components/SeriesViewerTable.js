@@ -50,6 +50,8 @@ class SeriesViewerTable extends React.Component {
         };
         this.onRotateRight = this.props.onRotateRight || function () {
         };
+        this.onPlay = this.props.onPlay || function() {
+        };
       }
       
       render() {
@@ -83,7 +85,7 @@ class SeriesViewerTable extends React.Component {
                     &nbsp;&nbsp;&nbsp;&nbsp;广告位招租3<DownOutlined style={searchbuttonstyle}/>
                     &nbsp;&nbsp;&nbsp;&nbsp;</a>
                 </Dropdown>
-                <CaretRightOutlined style={buttonstyle}/>
+                <CaretRightOutlined style={buttonstyle} onClick={this.onPlay}/>
                 <ZoomInOutlined style={buttonstyle} onClick={this.onZoomin}/>
                 <ZoomOutOutlined style={buttonstyle} onClick={this.onZoomout}/>
                 <Dropdown overlay={menu}>

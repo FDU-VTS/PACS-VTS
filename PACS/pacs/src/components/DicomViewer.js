@@ -84,7 +84,7 @@ class DicomViewer extends Component {
 
 
             if(first === true){
-                alert("第一次渲染")
+                // alert("第一次渲染")
                 this.rect = new THREE.Mesh(geometry, material);
                 console.log("第一次height");
                 console.log(this.rect.geometry.parameters.height);

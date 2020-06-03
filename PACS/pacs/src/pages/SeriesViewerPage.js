@@ -21,7 +21,8 @@ class SeriesViewerPage extends Component {
             viewMode: 'one',
             animationId: undefined,
             ifzoom: null,
-            flagzoom:false
+            flagzoom:false,
+            ifplay:false,
         };
         this.setState = this.setState.bind(this);
     }
@@ -40,6 +41,7 @@ class SeriesViewerPage extends Component {
     }
 
     nextInstance = () => {
+        // alert("下一曲")
         const currentInstanceId = this.state.index;
         const instancesCount = (this.state.instances || []).length;
         if (instancesCount === 0)
@@ -48,6 +50,7 @@ class SeriesViewerPage extends Component {
             this.setState({index: 0, rotation: null});
         else
             this.setState({index: currentInstanceId + 1, rotation: null});
+        this.setState({flagzoom:false});
     };
 
     prevInstance = () => {
@@ -61,7 +64,19 @@ class SeriesViewerPage extends Component {
         else {
             this.setState({index: currentInstanceId - 1, rotation: null});
         }
+        this.setState({flagzoom:false});
     };
+
+    play = () => {
+        this.timer = setInterval(() => {(
+            this.nextInstance()
+            )
+        }, 1000);
+        // if(!this.state.ifplay){
+            // setTimeout(this.nextInstance(), 1000)
+        // }
+
+    }
 
     zoomin = () => {
         this.setState({ifzoom: 'in',flagzoom:true});
@@ -103,7 +118,7 @@ class SeriesViewerPage extends Component {
                 {/* 把一个instance传过去 */}
                 <SeriesViewerTable onPrevInstance={this.prevInstance} onNextInstance={this.nextInstance} 
                 onZoomin={this.zoomin} onZoomout={this.zoomout}
-                onRotateLeft={this.rotateLeft} onRotateRight={this.rotateRight}/>
+                onRotateLeft={this.rotateLeft} onRotateRight={this.rotateRight} onPlay={this.play}/>
                 <DicomViewer instance={instance} {...viewerProps}/>
             </div>
         )
