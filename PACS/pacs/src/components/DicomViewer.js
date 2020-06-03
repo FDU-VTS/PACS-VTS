@@ -54,7 +54,7 @@ class DicomViewer extends Component {
         const alt = `didupdate ${this.props.rotation}`
         // alert(alt);
         const instance = this.props.instance;
-        const url = `/api/instances/${instance?instance.id:instance}/image`;
+        const url = `http://315v841f37.zicp.vip/api/instances/${instance?instance.id:instance}/image`;
         //设置场景 渲染器 和  相机
         const w = parseFloat(instance['columns']);
         const h = parseFloat(instance['rows']);
@@ -84,7 +84,7 @@ class DicomViewer extends Component {
 
 
             if(first === true){
-                alert("第一次渲染")
+                // alert("第一次渲染")
                 this.rect = new THREE.Mesh(geometry, material);
                 console.log("第一次height");
                 console.log(this.rect.geometry.parameters.height);
@@ -97,14 +97,17 @@ class DicomViewer extends Component {
                 //     this.rect.rotation.z = 0.0;
                 
                     if(this.props.ifzoom === 'in' && this.props.flagzoom){
-                        this.rect.geometry.parameters.height += 0.5;
-                        this.rect.geometry.parameters.width +=0.5;
+                        if(this.camera.fov > 0){this.camera.fov -=5;}
+                        else{this.camera.fov=0;}
+                        // this.rect.geometry.parameters.height += 0.5;
+                        // this.rect.geometry.parameters.width +=0.5;
                         this.camera.fov -=10;
                     }
                     else if(this.props.ifzoom === 'out' && this.props.flagzoom){
-                        this.rect.geometry.parameters.height -= 0.5;
-                        this.rect.geometry.parameters.width -=0.5;
-                        this.camera.fov +=10;
+                        if(this.camera.fov < 180){this.camera.fov +=5;}
+                        else{this.camera.fov=180;}
+                        // this.rect.geometry.parameters.height -= 0.5;
+                        // this.rect.geometry.parameters.width -=0.5;
                     }
 
                 this.scene.add(this.rect);
@@ -120,26 +123,29 @@ class DicomViewer extends Component {
             //     this.rect.rotation.z = 0.0;
             
             if(this.props.ifzoom === 'in' && this.props.flagzoom){
-                this.rect.geometry.parameters.height += 0.5;
-                this.rect.geometry.parameters.width +=0.5;
-                this.camera.fov -=5;
+                if(this.camera.fov > 0){this.camera.fov -=5;}
+                else{this.camera.fov=0;}
+                // this.rect.geometry.parameters.height += 0.5;
+                // this.rect.geometry.parameters.width +=0.5;
             }
             else if(this.props.ifzoom === 'out' && this.props.flagzoom){
-                this.rect.geometry.parameters.height -= 0.5;
-                this.rect.geometry.parameters.width -=0.5;
-                this.camera.fov +=5;
+                if(this.camera.fov < 180){this.camera.fov +=5;}
+                else{this.camera.fov=180;}
+                // this.rect.geometry.parameters.height -= 0.5;
+                // this.rect.geometry.parameters.width -=0.5;
             }
             // else{
             //     this.rect.geometry.parameters.height = 3;
             //     this.rect.geometry.parameters.width = 3;
             // }
             
-            console.log("第二次height");
+            //console.log("第二次height");
             //console.log(this.rect.geometry.parameters.height);
-            const height = this.rect.geometry.parameters.height;
-            console.log(height);
-            console.log(this.rect.geometry);
+            //const height = this.rect.geometry.parameters.height;
+            //console.log(height);
+            //console.log(this.rect.geometry);
             console.log(this.rect.rotation.z);
+            console.log("camera角度");
             console.log(this.camera.fov);
             this.scene.add(this.rect);
             this.rect.material = material;
@@ -147,8 +153,6 @@ class DicomViewer extends Component {
             this.rect.needsUpdate = true;
             this.camera.matrixWorldNeedsUpdate = true;
             this.camera.updateProjectionMatrix();
-            // this.rect.geometry.parameters.height = height;
-            // this.rect.geometry.parameters.width = height;
             this.renderer.render(this.scene, this.camera);
         });
 
@@ -160,6 +164,7 @@ class DicomViewer extends Component {
     }
 
     init = () => {
+        console.log("开始初始化");
         const scene =  new THREE.Scene()
         const camera = new THREE.PerspectiveCamera( 45, this.node.clientWidth / this.node.clientHeight, 0.1, 100);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -173,7 +178,7 @@ class DicomViewer extends Component {
         const alr = `重新创建方块 图片id${instance?instance.id:instance}`;
         alert(alr);
         const geometry = new THREE.PlaneGeometry(2,2);
-        const texture = new THREE.TextureLoader().load(`/api/instances/${instance?instance.id:instance}/image`);
+        const texture = new THREE.TextureLoader().load(`http://315v841f37.zicp.vip/api/instances/${instance?instance.id:instance}/image`);
         // const texture = new THREE.TextureLoader().load("https://pics0.baidu.com/feed/9f2f070828381f30c018a93d8873f30e6f06f09d.jpeg?token=aa6acd26095e3fbf1af24f6c40642918");
         const material = new THREE.MeshBasicMaterial( { map: texture} );
         // const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );

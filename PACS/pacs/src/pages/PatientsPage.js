@@ -25,7 +25,7 @@ class PatientsPage extends Component {
                 console.log("找到Patients了 如下")
                 console.log(studyList);
                 studyList.map(study => {
-                    for(var i=0;i<100000;i++){
+                    //for(var i=0;i<100000;i++){
                         show.push({
                             patient_name: study.patient_name,
                             patient_id: study.patient_id,
@@ -34,7 +34,7 @@ class PatientsPage extends Component {
                             patient_age: study.patient_age,
                             images_count: study.images_count,
                         })
-                    }
+                    //}
                     show.push({
                         patient_name: study.patient_name,
                         patient_id: study.patient_id,
