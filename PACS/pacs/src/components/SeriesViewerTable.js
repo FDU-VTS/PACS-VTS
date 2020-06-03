@@ -52,6 +52,8 @@ class SeriesViewerTable extends React.Component {
         };
         this.onRotateRight = this.props.onRotateRight || function () {
         };
+        this.onPlay = this.props.onPlay || function() {
+        };
       }
       
       render() {

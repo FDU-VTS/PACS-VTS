@@ -19,7 +19,7 @@ class StudiesPage extends Component {
     componentWillMount() {
         StudiesService.findStudies(studyList => {
             const show=[];
-            console.log(studyList);
+            console.log("你谁？",studyList);
             studyList.map(study => {
                 show.push({
                     patient_name: study.patient["patient_name"],
