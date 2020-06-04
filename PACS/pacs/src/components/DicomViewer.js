@@ -54,7 +54,7 @@ class DicomViewer extends Component {
         const alt = `didupdate ${this.props.rotation}`
         // alert(alt);
         const instance = this.props.instance;
-        const url = `/api/instances/${instance?instance.id:instance}/image`;
+        const url = `http://315v841f37.zicp.vip/api/instances/${instance?instance.id:instance}/image`;
         //设置场景 渲染器 和  相机
         const w = parseFloat(instance['columns']);
         const h = parseFloat(instance['rows']);
@@ -97,14 +97,17 @@ class DicomViewer extends Component {
                 //     this.rect.rotation.z = 0.0;
                 
                     if(this.props.ifzoom === 'in' && this.props.flagzoom){
-                        this.rect.geometry.parameters.height += 0.5;
-                        this.rect.geometry.parameters.width +=0.5;
+                        if(this.camera.fov > 0){this.camera.fov -=5;}
+                        else{this.camera.fov=0;}
+                        // this.rect.geometry.parameters.height += 0.5;
+                        // this.rect.geometry.parameters.width +=0.5;
                         this.camera.fov -=10;
                     }
                     else if(this.props.ifzoom === 'out' && this.props.flagzoom){
-                        this.rect.geometry.parameters.height -= 0.5;
-                        this.rect.geometry.parameters.width -=0.5;
-                        this.camera.fov +=10;
+                        if(this.camera.fov < 180){this.camera.fov +=5;}
+                        else{this.camera.fov=180;}
+                        // this.rect.geometry.parameters.height -= 0.5;
+                        // this.rect.geometry.parameters.width -=0.5;
                     }
 
                 this.scene.add(this.rect);
@@ -120,26 +123,29 @@ class DicomViewer extends Component {
             //     this.rect.rotation.z = 0.0;
             
             if(this.props.ifzoom === 'in' && this.props.flagzoom){
-                this.rect.geometry.parameters.height += 0.5;
-                this.rect.geometry.parameters.width +=0.5;
-                this.camera.fov -=5;
+                if(this.camera.fov > 0){this.camera.fov -=5;}
+                else{this.camera.fov=0;}
+                // this.rect.geometry.parameters.height += 0.5;
+                // this.rect.geometry.parameters.width +=0.5;
             }
             else if(this.props.ifzoom === 'out' && this.props.flagzoom){
-                this.rect.geometry.parameters.height -= 0.5;
-                this.rect.geometry.parameters.width -=0.5;
-                this.camera.fov +=5;
+                if(this.camera.fov < 180){this.camera.fov +=5;}
+                else{this.camera.fov=180;}
+                // this.rect.geometry.parameters.height -= 0.5;
+                // this.rect.geometry.parameters.width -=0.5;
             }
             // else{
             //     this.rect.geometry.parameters.height = 3;
             //     this.rect.geometry.parameters.width = 3;
             // }
             
-            console.log("第二次height");
+            //console.log("第二次height");
             //console.log(this.rect.geometry.parameters.height);
-            const height = this.rect.geometry.parameters.height;
-            console.log(height);
-            console.log(this.rect.geometry);
+            //const height = this.rect.geometry.parameters.height;
+            //console.log(height);
+            //console.log(this.rect.geometry);
             console.log(this.rect.rotation.z);
+            console.log("camera角度");
             console.log(this.camera.fov);
             this.scene.add(this.rect);
             this.rect.material = material;
@@ -147,8 +153,6 @@ class DicomViewer extends Component {
             this.rect.needsUpdate = true;
             this.camera.matrixWorldNeedsUpdate = true;
             this.camera.updateProjectionMatrix();
-            // this.rect.geometry.parameters.height = height;
-            // this.rect.geometry.parameters.width = height;
             this.renderer.render(this.scene, this.camera);
         });
 
@@ -159,34 +163,7 @@ class DicomViewer extends Component {
         //alert("componentWillUnmount");
     }
 
-    init = () => {
-        const scene =  new THREE.Scene()
-        const camera = new THREE.PerspectiveCamera( 45, this.node.clientWidth / this.node.clientHeight, 0.1, 100);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        this.scene = scene
-        this.camera = camera
-        this.renderer = renderer
-        renderer.setSize(this.node.clientWidth, this.node.clientHeight );
-        this.node.appendChild( renderer.domElement );
-        camera.position.z = 5;
-        const instance = this.props.instance;
-        const alr = `重新创建方块 图片id${instance?instance.id:instance}`;
-        alert(alr);
-        const geometry = new THREE.PlaneGeometry(2,2);
-        const texture = new THREE.TextureLoader().load(`/api/instances/${instance?instance.id:instance}/image`);
-        // const texture = new THREE.TextureLoader().load("https://pics0.baidu.com/feed/9f2f070828381f30c018a93d8873f30e6f06f09d.jpeg?token=aa6acd26095e3fbf1af24f6c40642918");
-        const material = new THREE.MeshBasicMaterial( { map: texture} );
-        // const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-        const cube = new THREE.Mesh( geometry, material );
-        this.cube = cube;
-        this.cube.needsUpdate = true;
-        this.scene.add( this.cube );
-        this.animate()
-        
-        this.renderer.render( this.scene, this.camera );
-
-    }
-
+   
     
 
     animate =() => {
@@ -203,8 +180,8 @@ class DicomViewer extends Component {
         let instance = this.props.instance;
         console.log('viewer组件获取的instance',instance)
         return (
-            <div ref={node => this.node = node} style={{height: window.innerHeight}}>
-                <div className={'leftTop'}>
+            <div ref={node => this.node = node} style={{height: window.innerHeight, background:"black"}}>
+                <div className={'leftTop'} style={{background:"black", color:"white" } }>
                     <div>img:{instance?instance.id:instance}</div>
                     <div>
                         Patient ID: {instance?instance.parent.patient['patient_id']:instance}
@@ -215,7 +192,6 @@ class DicomViewer extends Component {
                     <div>
                         Series ID: {instance?instance.parent.series['series_id']:instance}
                     </div>
-                    <br/>
                     <div>
                         Instance: {instance?instance['instance_number']:instance}
                     </div>

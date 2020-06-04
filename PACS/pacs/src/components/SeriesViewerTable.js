@@ -15,7 +15,64 @@ import {Link} from "react-router-dom";
 import DicomViewer from './DicomViewer';
 
 // http://315v841f37.zicp.vip/
-const menu = (
+const menu1 = (
+    <Menu>
+      <Menu.Item>
+        <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
+          it's ok
+        </a>
+      </Menu.Item>
+      <Menu.Item>
+        <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
+          2nd menu item
+        </a>
+      </Menu.Item>
+      <Menu.Item>
+        <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
+          3rd menu item
+        </a>
+      </Menu.Item>
+    </Menu>
+  );
+const menu2 = (
+    <Menu>
+      <Menu.Item>
+        <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
+          1st menu item
+        </a>
+      </Menu.Item>
+      <Menu.Item>
+        <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
+          2nd menu item
+        </a>
+      </Menu.Item>
+      <Menu.Item>
+        <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
+          3rd menu item
+        </a>
+      </Menu.Item>
+    </Menu>
+  );
+  const menu3 = (
+    <Menu>
+      <Menu.Item>
+        <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
+          1st menu item
+        </a>
+      </Menu.Item>
+      <Menu.Item>
+        <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
+          2nd menu item
+        </a>
+      </Menu.Item>
+      <Menu.Item>
+        <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
+          3rd menu item
+        </a>
+      </Menu.Item>
+    </Menu>
+  );
+  const menu4 = (
     <Menu>
       <Menu.Item>
         <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
@@ -42,6 +99,8 @@ class SeriesViewerTable extends React.Component {
         };
         this.onPrevInstance = this.props.onPrevInstance || function () {
         };
+        this.onPlay = this.props.onPlay || function () {
+        };
         this.onZoomin = this.props.onZoomin || function () {
         };
         this.onZoomout = this.props.onZoomout || function () {
@@ -49,8 +108,6 @@ class SeriesViewerTable extends React.Component {
         this.onRotateLeft = this.props.onRotateLeft || function () {
         };
         this.onRotateRight = this.props.onRotateRight || function () {
-        };
-        this.onPlay = this.props.onPlay || function() {
         };
       }
       
@@ -60,7 +117,7 @@ class SeriesViewerTable extends React.Component {
         const searchbuttonstyle = {color:'white', fontSize:25};
         const searchstyle = {color:"white",fontSize:"25px", width:"100px"};
         return (
-          <div>
+          <div style={{background:"black"}}>
              <Layout>
               <Header style={{ position: 'fixed', zIndex: 1, width: '100%'}}>
                 <Link to='/studies'>
@@ -68,18 +125,18 @@ class SeriesViewerTable extends React.Component {
                 </Link>
                 <ArrowLeftOutlined style={buttonstyle} onClick={this.onPrevInstance}/>
                 <ArrowRightOutlined style={buttonstyle} onClick={this.onNextInstance}/>
-                <Dropdown overlay={menu}>
+                <Dropdown overlay={menu1}>
                     <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={searchstyle}>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;广告位招租1<DownOutlined style={searchbuttonstyle}/>
                     &nbsp;&nbsp;&nbsp;</a>
                 </Dropdown>
-                <Dropdown overlay={menu}>
+                <Dropdown overlay={menu2}>
                     <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={{color:"white",
                 fontSize:"25px"}}>
                     &nbsp;&nbsp;&nbsp;&nbsp;广告位招租2<DownOutlined style={searchbuttonstyle}/>
                     &nbsp;&nbsp;&nbsp;</a>
                 </Dropdown>
-                <Dropdown overlay={menu}>
+                <Dropdown overlay={menu3}>
                     <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={{color:"white",
                 fontSize:"25px"}}>
                     &nbsp;&nbsp;&nbsp;&nbsp;广告位招租3<DownOutlined style={searchbuttonstyle}/>
@@ -88,7 +145,7 @@ class SeriesViewerTable extends React.Component {
                 <CaretRightOutlined style={buttonstyle} onClick={this.onPlay}/>
                 <ZoomInOutlined style={buttonstyle} onClick={this.onZoomin}/>
                 <ZoomOutOutlined style={buttonstyle} onClick={this.onZoomout}/>
-                <Dropdown overlay={menu}>
+                <Dropdown overlay={menu4}>
                     <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={{color:"white",
                 fontSize:"25px"}}>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;广告位招租4<DownOutlined style={searchbuttonstyle}/>

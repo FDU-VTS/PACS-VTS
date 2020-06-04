@@ -88,23 +88,21 @@ class StudiesTable extends React.Component {
     console.log(this.props.data)
     const columns = [
       {
-        title: 'Patient Name',
-        dataIndex: 'patient_name',
-        key: 'patient_name',
-        width: '15%',
-        ...this.getColumnSearchProps('patient_name'),
-      },
-      {
         title: 'Study ID',
         dataIndex: 'study_id',
         key: 'study_id',
-        width: '35%',
         ...this.getColumnSearchProps('study_id'),
         render: text => (<div>
           <a href = {`/studies/${text}`}>
             {text}
           </a>
         </div>),
+      },
+      {
+        title: 'Patient Name',
+        dataIndex: 'patient_name',
+        key: 'patient_name',
+        ...this.getColumnSearchProps('patient_name'),
       },
       {
         title: 'Study Description',

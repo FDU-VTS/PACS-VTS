@@ -24,6 +24,7 @@ ReactDOM.render(
         <Route path='/studies/:id' component={StudySeriesPage}/>
         <Route path='/series/:id' component={SeriesViewerPage}/>
         <Route path='/threetest' component={Three}/>
+        <Route exact path='/' component={PatientsPage}/>
       </div>
       </BrowserRouter>
   </Provider>,
