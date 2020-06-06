@@ -1,6 +1,6 @@
 numpy==1.17.3
 pynetdicom==1.4.1
-Django==2.2.10
+Django==2.2.13
 pip==20.0.2
 tornado==5.0.2
 pydicom==1.4.2
