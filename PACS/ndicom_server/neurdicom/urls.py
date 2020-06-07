@@ -42,11 +42,13 @@ INSTANCE_DETAIL_URL = r'/api/instances/(\d+)'
 INSTANCE_IMAGE_URL = r'/api/instances/(\d+)/image'
 INSTANCE_RAW_URL = r'/api/instances/(\d+)/raw'
 INSTANCE_TAGS_URL = r'/api/instances/(\d+)/tags'
-INSTANCE_PROCESS_URL = r'/api/instances/(\d+)/process/by_plugin/(\d+)'
-INSTANCE_DELETE_URL = r'/api/instances/(\d+)/delete'
+INSTANCE_IMG_PROCESS_URL = r'/api/instances/(\d+)/process/by_plugin/(\d+)/image'
+INSTANCE_JSON_PROCESS_URL = r'/api/instances/(\d+)/process/by_plugin/(\d+)/json'
 
 PLUGIN_LIST_URL = r'/api/plugins'
 PLUGIN_DETAIL_URL = r'/api/plugins/(\d+)'
+PLUGIN_PROCESS_URL = r'/api/plugins/(\d+)/(\d+)'
 PLUGIN_INSTALL_URL = r'/api/plugins/([a-zA-Z]([a-zA-Z]|-|_|\d)*)/install'
+
 
 MEDIA_URL = r'/media/(.*)'

@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from jsonfield import JSONField
 from pydicom import Dataset
 
+
 import uuid
 
 from apps.core.managers import UserManager

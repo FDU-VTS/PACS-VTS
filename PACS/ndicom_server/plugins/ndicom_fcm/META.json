@@ -1,0 +1,58 @@
+{
+  "author": "Roman Baygildin",
+  "name": "fcm",
+  "display_name": "FCM Segmentation",
+  "version": "1.0",
+  "modalities": [
+    "MR",
+    "CT"
+  ],
+  "params": {
+    "n_clusters": {
+      "type": "int",
+      "is_required": false,
+      "default": 3,
+      "display_name": "Number of clusters",
+      "hint": "Number of clusters"
+    },
+    "m": {
+      "type": "float",
+      "is_required": false,
+      "default": 2,
+      "display_name": "Membership",
+      "hint": "Membership"
+    },
+    "eps": {
+      "type": "float",
+      "default": 0.001,
+      "is_required": false,
+      "display_name": "Error",
+      "hint": "Stop criterion"
+    },
+    "max_it": {
+      "type": "int",
+      "is_required": false,
+      "default": 100,
+      "display_name": "Maximum iterations",
+      "hint": "Maximum iterations"
+    },
+    "numpass": {
+      "type": "int",
+      "is_required": false,
+      "default": 10,
+      "display_name": "Number of pass",
+      "hint": "Number of skull stripping passes"
+    },
+    "median_radius": {
+      "type": "int",
+      "is_required": false,
+      "default": 5,
+      "display_name": "Median radius",
+      "hint": "Median radius of skull stripping"
+    }
+  },
+  "result": {
+    "type": "IMAGE"
+  },
+  "type": "SEGMENT"
+}

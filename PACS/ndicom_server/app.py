@@ -48,7 +48,8 @@ def main():
             (SERIES_LIST_URL, SeriesListHandler),
 
             # Instances
-            (INSTANCE_PROCESS_URL, InstanceProcessHandler),
+            (INSTANCE_IMG_PROCESS_URL, InstanceImgProcessHandler),
+            (INSTANCE_JSON_PROCESS_URL, InstanceJsonProcessHandler),
             (INSTANCE_TAGS_URL, InstanceTagsHandler),
             (INSTANCE_IMAGE_URL, InstanceImageHandler),
             (INSTANCE_RAW_URL, InstanceRawHandler),
@@ -59,7 +60,7 @@ def main():
             # Plugins
             (PLUGIN_DETAIL_URL, PluginDetailHandler),
             (PLUGIN_LIST_URL, PluginListHandler),
-            (PLUGIN_INSTALL_URL, InstallPluginHandler),
+
 
             # Media download
             (MEDIA_URL, tornado.web.StaticFileHandler, {'path': 'media'})
