@@ -1,0 +1,37 @@
+{
+  "author": "Roman Baygildin",
+  "name": "kmeans",
+  "version": "1.0",
+  "display_name": "KMeans Segmentation",
+  "modalities": [
+    "MR",
+    "CT"
+  ],
+  "params": {
+    "n_clusters": {
+      "type": "int",
+      "is_required": false,
+      "default": 3,
+      "display_name": "Number of clusters",
+      "hint": "Number of clusters"
+    },
+    "numpass": {
+      "type": "int",
+      "is_required": false,
+      "default": 10,
+      "display_name": "Number of pass",
+      "hint": "Number of skull stripping passes"
+    },
+    "median_radius": {
+      "type": "int",
+      "is_required": false,
+      "default": 5,
+      "display_name": "Median radius",
+      "hint": "Median radius of skull stripping"
+    }
+  },
+  "type": "SEGMENT",
+  "result": {
+    "type": "IMAGE"
+  }
+}

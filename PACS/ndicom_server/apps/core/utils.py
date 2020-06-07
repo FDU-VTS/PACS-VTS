@@ -4,9 +4,12 @@ from io import BytesIO
 from json import JSONEncoder
 from urllib.request import urlopen
 from zipfile import ZipFile
-
+import tarfile as tar
+from json import loads
+from importlib.util import find_spec
 import numpy as np
 import pip
+import sys
 from PIL import Image
 from pydicom import Sequence
 from pydicom import read_file
@@ -202,22 +205,23 @@ class PluginSaver:
         if plugin is None:
             plugin = Plugin()
         if isinstance(fp, str):
-            fp = open(fp, 'rb')
-        with ZipFile(fp) as plugin_archive:
-            archive_name = plugin_archive.filelist[0].filename
-            meta = plugin_archive.read(os.path.join(archive_name, 'META.json'))
-            plugin_meta = json.loads(meta)
-            plugin.name = plugin_meta['name']
-            plugin.author = plugin_meta['author']
-            plugin.version = plugin_meta['version']
-            plugin.info = plugin_meta['info']
-            plugin.docs = plugin_meta['docs']
-            plugin.params = plugin_meta.get('params', None)
-            plugin.result = plugin_meta['result']
-            plugin.tags = plugin_meta.get('tags', None)
-            plugin.modalities = plugin_meta.get('modalities', None)
-            plugin.is_native = is_native
-            plugin.plugin.save('', fp)
+            dist = os.path.join(fp, 'META.json')
+        with open(dist) as meta:
+            meta_info = json.loads(meta.read())
+            plugin_name = meta_info['name']
+            plugin = Plugin()
+            plugin.name = plugin_name
+            plugin.display_name = meta_info['display_name']
+            plugin.author = meta_info['author']
+            plugin.version = meta_info.get('version', '1.0')
+            plugin.info = meta_info.get('info', '')
+            plugin.docs = meta_info.get('docs', '')
+            plugin.params = meta_info.get('params', [])
+            plugin.result = meta_info['result']
+            plugin.tags = meta_info.get('tags', [])
+            plugin.modalities = meta_info.get('modalities', [])
+            plugin.type = meta_info.get('type', 'SEGMENT')
+            plugin.is_installed = True
             plugin.save()
         return plugin
 
@@ -253,14 +257,22 @@ class DicomJsonEncoder(JSONEncoder):
 
 
 def convert_dicom_to_img(ds: Dataset, img_format='jpeg'):
-    return convert_array_to_img(ds.pixel_array, img_format=img_format)
-
-
-def convert_array_to_img(pixel_array: np.ndarray, img_format='jpeg'):
+    pixel_array = ds.pixel_array
     img = convert_to_8bit(pixel_array)
     img = Image.fromarray(img)
     file = BytesIO()
     img.save(file, format=img_format)
+    file.seek(0)
+    return file.read()
+
+
+def convert_array_to_img(pixel_array: np.ndarray, name):
+    img = convert_to_8bit(pixel_array)
+    img = Image.fromarray(img)
+    result = './media/result_img/' + name + '.jpg'
+    img.save(result)
+    file = BytesIO()
+    img.save(file, format='jpeg')
     file.seek(0)
     return file.read()
 
@@ -445,30 +457,3 @@ def render_exception(orig_cls):
     orig_cls.put = put
     orig_cls.delete = delete
     return orig_cls
-
-
-def install_from_pypi(plugin_name, upgrade=True):
-    with urlopen('https://raw.githubusercontent.com/reactmed/neurdicom-plugins/master/REPO_META.json') as meta_file:
-        plugins = json.loads(meta_file.read())['plugins']
-        for plugin in plugins:
-            if plugin['name'] == plugin_name:
-                if upgrade:
-                    ret = pip.main(['install', '--upgrade', plugin['name']])
-                else:
-                    ret = pip.main(['install', plugin['name']])
-                if ret > 0:
-                    raise ValueError('Плагин %s не найден на сайте pypi.org' % plugin_name)
-                meta = plugin['meta']
-                plugin_ = Plugin()
-                plugin_.author = meta['author']
-                plugin_.name = plugin['name']
-                plugin_.display_name = meta['display_name']
-                plugin_.version = meta.get('version', '1.0')
-                plugin_.info = meta.get('info', None)
-                plugin_.docs = meta.get('docs', None)
-                plugin_.modalities = meta.get('modalities', [])
-                plugin_.tags = meta.get('tags', [])
-                plugin_.params = meta.get('params', [])
-                plugin_.result = meta['result']
-                plugin_.is_installed = True
-                return plugin_.save()
