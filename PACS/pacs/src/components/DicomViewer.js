@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import * as THREE from 'three';
 import DicomService from '../services/DicomService';
-import './DicomViewer'
+import './DicomViewer.css'
 
 
 var first = true;
@@ -21,12 +21,40 @@ class DicomViewer extends Component {
         this.renderer.setSize(this.node.clientWidth, this.node.clientHeight);
     };
 
+    onMouseClick = (e) => {
+        const scene = this.scene;
+        const camera = this.camera;
+        const rayCaster = this.rayCaster;
+        const clientX = e.clientX;
+        const clientY = e.clientY;
+        const array = DicomViewer.getMousePosition(e.target, clientX, clientY);
+        const vecPos = new THREE.Vector2(array[0] * 2 - 1, -(array[1] * 2) + 1);
+        rayCaster.setFromCamera(vecPos, camera);
+        const intersects = rayCaster.intersectObjects(scene.children);
+        if (intersects && intersects.length > 0) {
+            const intersectedImg = intersects[0];
+            const uv = intersectedImg.uv;
+            if (uv) {
+                console.log(uv);
+                this.setState({seedPoint: new THREE.Vector2(uv.x, uv.y)});
+            }
+        }
+    };
+
+    static getMousePosition(dom, x, y) {
+        const boundingBox = dom.getBoundingClientRect();
+        return [
+            (x - boundingBox.left) / boundingBox.width, (y - boundingBox.top) / boundingBox.height
+        ];
+    }
+
     componentDidMount() {
         
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(45, this.node.clientWidth / this.node.clientHeight, 0.1, 100);
+        this.camera = new THREE.PerspectiveCamera(65, this.node.clientWidth / this.node.clientHeight, 0.1, 100);
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.node.clientWidth, this.node.clientHeight);
+        this.node.onclick = this.onMouseClick;
         
     }
     componentWillMount() {
@@ -54,15 +82,18 @@ class DicomViewer extends Component {
         const alt = `didupdate ${this.props.rotation}`
         // alert(alt);
         const instance = this.props.instance;
-        const url = `http://315v841f37.zicp.vip/api/instances/${instance?instance.id:instance}/image`;
+        const url = `/api/instances/${instance?instance.id:instance}/image`;
         //设置场景 渲染器 和  相机
         const w = parseFloat(instance['columns']);
         const h = parseFloat(instance['rows']);
         // console.log("长宽",w,h)
         
         this.node.appendChild(this.renderer.domElement);
+        // this.node.addEventListener('click', alert("fuck"));
         this.node.addEventListener('resize', this.onWindowResize, false);
         const seedPoint = this.state.seedPoint;
+        const vertShader = document.getElementById('mainVert').textContent;
+        const fragShader = document.getElementById(this.props.colorScale + 'Frag').textContent;
         new THREE.TextureLoader().load(url, (texture) => {
             const uniforms = {
                 texture: {
@@ -78,7 +109,11 @@ class DicomViewer extends Component {
             // console.log("scalesize");
             // console.log(this.props.scalesize);
             const geometry = new THREE.PlaneGeometry(3, 3);
-            const material = new THREE.MeshBasicMaterial( { map: texture} );
+            const material = new THREE.ShaderMaterial({
+                uniforms: uniforms,
+                vertexShader: vertShader,
+                fragmentShader: fragShader
+            });
             
             
 
@@ -144,54 +179,34 @@ class DicomViewer extends Component {
             //const height = this.rect.geometry.parameters.height;
             //console.log(height);
             //console.log(this.rect.geometry);
-            console.log(this.rect.rotation.z);
-            console.log("camera角度");
-            console.log(this.camera.fov);
+            // console.log(this.rect.rotation.z);
+            // console.log("camera角度");
+            // console.log(this.camera.fov);
             this.scene.add(this.rect);
             this.rect.material = material;
             //this.rect.geometry = geometry;
             this.rect.needsUpdate = true;
             this.camera.matrixWorldNeedsUpdate = true;
             this.camera.updateProjectionMatrix();
+            console.log("当前拖动序号", instance.id)
             this.renderer.render(this.scene, this.camera);
+            // this.animate()
         });
 
         
     }
-
+    animate =() => {
+        requestAnimationFrame( this.animate );
+        //this.cube.rotation.x += 0.05;
+        //this.cube.rotation.y += 0.05;
+       // this.cube.rotation.z += 0.1;
+        this.renderer.render( this.scene, this.camera );
+      }
     componentWillUnmount() {
         //alert("componentWillUnmount");
     }
 
-    init = () => {
-        console.log("开始初始化");
-        const scene =  new THREE.Scene()
-        const camera = new THREE.PerspectiveCamera( 45, this.node.clientWidth / this.node.clientHeight, 0.1, 100);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        this.scene = scene
-        this.camera = camera
-        this.renderer = renderer
-        renderer.setSize(this.node.clientWidth, this.node.clientHeight );
-        this.node.appendChild( renderer.domElement );
-        camera.position.z = 5;
-        const instance = this.props.instance;
-        const alr = `重新创建方块 图片id${instance?instance.id:instance}`;
-        alert(alr);
-        const geometry = new THREE.PlaneGeometry(2,2);
-        const texture = new THREE.TextureLoader().load(`http://315v841f37.zicp.vip/api/instances/${instance?instance.id:instance}/image`);
-        // const texture = new THREE.TextureLoader().load("https://pics0.baidu.com/feed/9f2f070828381f30c018a93d8873f30e6f06f09d.jpeg?token=aa6acd26095e3fbf1af24f6c40642918");
-        const material = new THREE.MeshBasicMaterial( { map: texture} );
-        // const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-        const cube = new THREE.Mesh( geometry, material );
-        this.cube = cube;
-        this.cube.needsUpdate = true;
-        this.scene.add( this.cube );
-        this.animate()
-        
-        this.renderer.render( this.scene, this.camera );
-
-    }
-
+   
     
 
     animate =() => {
@@ -209,7 +224,7 @@ class DicomViewer extends Component {
         console.log('viewer组件获取的instance',instance)
         return (
             <div ref={node => this.node = node} style={{height: window.innerHeight}}>
-                <div className={'leftTop'}>
+                <div className={'leftTop'} >
                     <div>img:{instance?instance.id:instance}</div>
                     <div>
                         Patient ID: {instance?instance.parent.patient['patient_id']:instance}
@@ -218,9 +233,8 @@ class DicomViewer extends Component {
                         Patient Name: {instance?instance.parent.patient['patient_name']:instance}
                     </div>
                     <div>
-                        Series ID: {instance?instance.parent.series['series_id']:instance}
+                        Series ID: {instance?instance.parent.series['id']:instance}
                     </div>
-                    <br/>
                     <div>
                         Instance: {instance?instance['instance_number']:instance}
                     </div>

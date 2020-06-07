@@ -1,71 +1,62 @@
-import React, { Component } from 'react';
-import * as THREE from 'three';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import 'antd/dist/antd.css';
+import { Slider, InputNumber, Row, Col } from 'antd';
 
-class Three extends Component {
-   
-    componentDidMount() {
-        this.init()
-    }
-    
-    init = () => {
-        const scene =  new THREE.Scene()
-        const camera = new THREE.PerspectiveCamera( 75, this.mount.clientWidth / this.mount.clientHeight, 0.1, 1000 );
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        this.scene = scene
-        this.camera = camera
-        this.renderer = renderer
-        renderer.setSize(this.mount.clientWidth, this.mount.clientHeight );
-        this.mount.appendChild( renderer.domElement );
-        camera.position.z = 5;
-      
-        this.createCube()
-        this.createLine()
-        this.animate();
-        
-    }
 
-    createCube = () => {
-      const geometry = new THREE.BoxGeometry( 1, 2, 1, 4 );
-      const material = new THREE.MeshBasicMaterial( { color: 0x1E90FF } );
-      const cube = new THREE.Mesh( geometry, material );
-      this.cube = cube
-      this.scene.add( cube );
-    }
+class Three extends React.Component {
+  constructor(props) {
+    super(props);
+    this.setState.bind(this);
+    this.onSetInstance = this.props.onSetInstance || function () {
+    };
+  }
+  state = {
+    inputValue: 1,
+    maxValue: this.props.maxValue
+  };
 
-    createLine = () => {
-      const material = new THREE.LineBasicMaterial({color: 0x0f00ff}) //定义线的材质
-      const geometry = new THREE.Geometry()
-      geometry.vertices.push(new THREE.Vector3(-2, 0, 0))
-      geometry.vertices.push(new THREE.Vector3( 0, 2, 0) ); //相当于是从 将前两个坐标连成一条线
-      // geometry.vertices.push(new THREE.Vector3( 2, 0, 0) );
-      const line = new THREE.Line(geometry, material)
-      this.line = line
-      line.position.x = -1
-      line.position.y = 2
-      this.scene.add(line)
-    }
+  onChange = value => {
+    this.onSetInstance(value);
+    this.setState({
+      inputValue: value,
+    });
+  };
 
-    animate =() => {
-      requestAnimationFrame( this.animate );
-      this.cube.rotation.x += 0.01;
-      this.cube.rotation.y += 0.01;
-      this.line.rotation.x += 0.02
-      this.renderer.render( this.scene, this.camera );
-    }
+  componentDidUpdate() {
 
-    componentWillUnmount() {
-        this.mount.removeChild(this.renderer.domElement)
-      }
-    render() {
-        return (
-            <div
-                id= "canvas"
-                style={{ width: '600px', height: '600px',background:'#888' }}
-                ref={(mount) => { this.mount = mount }}
-            />
-        );
-    }
+  }
+
+  render() {
+    const { inputValue } = this.state;
+
+    const maxValue = this.props.maxValue;
+    console.log("序列长度", maxValue)
+    return (
+      <Row>
+        <Col span={20}>
+          <Slider
+            min={1}
+            max={maxValue-1}
+            onChange={this.onChange}
+            value={typeof inputValue === 'number' ? inputValue : 0}
+          />
+        </Col>
+        <Col span={4}>
+          <InputNumber
+            min={1}
+            max={maxValue-1}
+            style={{ margin: '0 16px' }}
+            value={inputValue}
+            onChange={this.onChange}
+          />
+        </Col>
+      </Row>
+    );
+  }
 }
-//   ReactDOM.render(<Scene />, document.getElementById('canvas'))
+
+
+
 
 export default Three;

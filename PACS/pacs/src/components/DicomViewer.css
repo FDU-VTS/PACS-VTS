@@ -1,14 +1,14 @@
 .leftTop{
     position: absolute;
-    top: 80px;
+    top: 100px;
     /*padding-top: 40px;*/
     /*padding-left: 10px;*/
     left: 40px;
     z-index: 5;
     display:block;
     text-align: left;
-    color: white;
-    background: black;
+    color: rgb(39, 160, 39);
+    background:transparent;
 }
 
 .leftTop2{

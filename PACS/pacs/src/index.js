@@ -12,6 +12,8 @@ import * as serviceWorker from './serviceWorker';
 import StudySeriesPage from "./pages/StudySeriesPage"
 import Three from "./pages/Three"
 import SeriesViewerPage from "./pages/SeriesViewerPage"
+// import Slider from './components/Slider'
+
 const store = createStore(combineReducers({locale}));
 
 ReactDOM.render(
