@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <!--
+      manifest.json provides metadata used when your web app is added to the
+      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
+    -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <!--<script src="%PUBLIC_URL%/cornerstone-core/cornerstone.min.js"></script>-->
+    <!--<script src="%PUBLIC_URL%/cornerstone-wado-image-loader/cornerstoneWADOImageLoader.min.js"></script>-->
+    <!--<script src="%PUBLIC_URL%/cornerstone-wado-image-loader/cornerstoneWADOImageLoaderCodecs.min.js"></script>-->
+    <!--<script src="%PUBLIC_URL%/cornerstone-wado-image-loader/cornerstoneWADOImageLoaderWebWorker.min.js"></script>-->
+    <title>React App</title>
+</head>
+<body>
+<noscript>
+    You need to enable JavaScript to run this app.
+</noscript>
+<script id="mainVert" src="mainVert" type="x-shader/x-vertex">
+    varying vec2 vUv;
+
+    void main() {
+        vUv = uv;
+
+        gl_Position =   projectionMatrix *
+                        modelViewMatrix *
+                        vec4(position,1.0);
+    }
+
+</script>
+<script id="mainFrag" type="x-shader/x-fragment">
+    #define R 5.0
+
+    uniform sampler2D texture;
+    uniform vec2 seedPoint;
+    uniform vec2 imgSize;
+
+    varying vec2 vUv;
+
+    void main() {
+        vec2 pstep = 1.0 / imgSize;
+        vec3 outColor = texture2D(texture, vUv).rgb;
+        if(seedPoint.x >= 0.0 && seedPoint.y >= 0.0){
+            vec2 circle = vec2((vUv.x - seedPoint.x) * (vUv.x - seedPoint.x), (vUv.y - seedPoint.y) * (vUv.y - seedPoint.y));
+            float r = R * pstep.x;
+            if(circle.x + circle.y <= r * r){
+                outColor = vec3(1.0, 0.0, 0.0);
+            }
+        }
+        gl_FragColor = vec4(outColor, 1.0);
+    }
+
+</script>
+
+
+
+
+<div id="root" style="height: 100%; min-height: 300px; min-width: 1000px;"></div>
+<script>
+
+</script>
+</body>
+</html>

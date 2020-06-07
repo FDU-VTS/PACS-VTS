@@ -1,11 +1,3 @@
-// @remove-on-eject-begin
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-// @remove-on-eject-end
 'use strict';
 
 // Do this as the first thing so that any code reading it knows the right env.
@@ -21,15 +13,7 @@ process.on('unhandledRejection', err => {
 
 // Ensure environment variables are read.
 require('../config/env');
-// @remove-on-eject-begin
-// Do the preflight checks (only happens before eject).
-const verifyPackageTree = require('./utils/verifyPackageTree');
-if (process.env.SKIP_PREFLIGHT_CHECK !== 'true') {
-  verifyPackageTree();
-}
-const verifyTypeScriptSetup = require('./utils/verifyTypeScriptSetup');
-verifyTypeScriptSetup();
-// @remove-on-eject-end
+
 
 const path = require('path');
 const chalk = require('react-dev-utils/chalk');
