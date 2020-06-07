@@ -18,19 +18,19 @@ import DicomViewer from './DicomViewer';
 const menu1 = (
     <Menu>
       <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
+        <a target="_blank" rel="noopener noreferrer" href=" ">
           it's ok
-        </a>
+        </a >
       </Menu.Item>
       <Menu.Item>
         <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
           2nd menu item
-        </a>
+        </a >
       </Menu.Item>
       <Menu.Item>
         <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
           3rd menu item
-        </a>
+        </a >
       </Menu.Item>
     </Menu>
   );
@@ -39,17 +39,17 @@ const menu2 = (
       <Menu.Item>
         <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
           1st menu item
-        </a>
+        </a >
       </Menu.Item>
       <Menu.Item>
         <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
           2nd menu item
-        </a>
+        </a >
       </Menu.Item>
       <Menu.Item>
         <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
           3rd menu item
-        </a>
+        </a >
       </Menu.Item>
     </Menu>
   );
@@ -58,17 +58,17 @@ const menu2 = (
       <Menu.Item>
         <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
           1st menu item
-        </a>
+        </a >
       </Menu.Item>
       <Menu.Item>
         <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
           2nd menu item
-        </a>
+        </a >
       </Menu.Item>
       <Menu.Item>
         <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
           3rd menu item
-        </a>
+        </a >
       </Menu.Item>
     </Menu>
   );
@@ -77,17 +77,17 @@ const menu2 = (
       <Menu.Item>
         <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
           1st menu item
-        </a>
+        </a >
       </Menu.Item>
       <Menu.Item>
         <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
           2nd menu item
-        </a>
+        </a >
       </Menu.Item>
       <Menu.Item>
         <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
           3rd menu item
-        </a>
+        </a >
       </Menu.Item>
     </Menu>
   );
@@ -113,54 +113,76 @@ class SeriesViewerTable extends React.Component {
       
       render() {
         const { Header, Content } = Layout;
-        const buttonstyle = {color:'white', fontSize:30,width:60};
+        const buttonstyle = {color:'white', fontSize:30};
         const searchbuttonstyle = {color:'white', fontSize:25};
-        const searchstyle = {color:"white",fontSize:"25px", width:"100px"};
+        const searchstyle = {color:"white",fontSize:"20px"};
         return (
-          <div style={{background:"black"}}>
+          <div>
              <Layout>
               <Header style={{ position: 'fixed', zIndex: 1, width: '100%'}}>
-                <Link to='/studies'>
-                    <BankOutlined style={buttonstyle}/>               
-                </Link>
-                <ArrowLeftOutlined style={buttonstyle} onClick={this.onPrevInstance}/>
-                <ArrowRightOutlined style={buttonstyle} onClick={this.onNextInstance}/>
-                <Dropdown overlay={menu1}>
-                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={searchstyle}>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;广告位招租1<DownOutlined style={searchbuttonstyle}/>
-                    &nbsp;&nbsp;&nbsp;</a>
-                </Dropdown>
-                <Dropdown overlay={menu2}>
-                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={{color:"white",
-                fontSize:"25px"}}>
-                    &nbsp;&nbsp;&nbsp;&nbsp;广告位招租2<DownOutlined style={searchbuttonstyle}/>
-                    &nbsp;&nbsp;&nbsp;</a>
-                </Dropdown>
-                <Dropdown overlay={menu3}>
-                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={{color:"white",
-                fontSize:"25px"}}>
-                    &nbsp;&nbsp;&nbsp;&nbsp;广告位招租3<DownOutlined style={searchbuttonstyle}/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;</a>
-                </Dropdown>
-                <CaretRightOutlined style={buttonstyle} onClick={this.onPlay}/>
-                <ZoomInOutlined style={buttonstyle} onClick={this.onZoomin}/>
-                <ZoomOutOutlined style={buttonstyle} onClick={this.onZoomout}/>
-                <Dropdown overlay={menu4}>
-                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={{color:"white",
-                fontSize:"25px"}}>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;广告位招租4<DownOutlined style={searchbuttonstyle}/>
-                    &nbsp;&nbsp;&nbsp;&nbsp;</a>
-                </Dropdown>
-                <RedoOutlined style={buttonstyle} onClick={this.onRotateLeft}/>
-                <UndoOutlined style={buttonstyle} onClick={this.onRotateRight}/>
+                <Menu theme="dark" mode="horizontal">
+                <Menu.Item>
+                  <Link to='/studies'>
+                      <BankOutlined style={buttonstyle}/>               
+                  </Link>
+                </Menu.Item>
+                <Menu.Item>
+                  <ArrowLeftOutlined style={buttonstyle} onClick={this.onPrevInstance}/>
+                </Menu.Item>
+                <Menu.Item>
+                  <ArrowRightOutlined style={buttonstyle} onClick={this.onNextInstance}/>
+                </Menu.Item>
+                <Menu.Item>
+                  <Dropdown overlay={menu1}>
+                      <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={searchstyle}>
+                      广告位招租1<DownOutlined style={searchbuttonstyle}/>
+                      </a >
+                  </Dropdown>
+                </Menu.Item>
+                <Menu.Item>
+                  <Dropdown overlay={menu2}>
+                      <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={searchstyle}>
+                      广告位招租2<DownOutlined style={searchbuttonstyle}/>
+                      </a >
+                  </Dropdown>
+                </Menu.Item>
+                <Menu.Item>
+                  <Dropdown overlay={menu3}>
+                      <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={searchstyle}>
+                      广告位招租3<DownOutlined style={searchbuttonstyle}/>
+                      </a >
+                  </Dropdown>
+                </Menu.Item>
+                <Menu.Item>
+                  <CaretRightOutlined style={buttonstyle} onClick={this.onPlay}/>
+                </Menu.Item>
+                <Menu.Item>
+                  <ZoomInOutlined style={buttonstyle} onClick={this.onZoomin}/>
+                </Menu.Item>
+                <Menu.Item>
+                  <ZoomOutOutlined style={buttonstyle} onClick={this.onZoomout}/>
+                </Menu.Item>
+                <Menu.Item>
+                  <Dropdown overlay={menu4}>
+                      <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={searchstyle}>
+                      广告位招租4<DownOutlined style={searchbuttonstyle}/>
+                      </a >
+                  </Dropdown>
+                </Menu.Item>
+                <Menu.Item>
+                  <RedoOutlined style={buttonstyle} onClick={this.onRotateLeft}/>
+                </Menu.Item>
+                <Menu.Item>
+                  <UndoOutlined style={buttonstyle} onClick={this.onRotateRight}/>
+                </Menu.Item>
+                </Menu>
               </Header>
-              <Content>
+              <Content style={{backgroundColor:"black"}}>
                 <br></br>
                 <br></br>
                 <br></br>
               </Content>
-            </Layout>
-            
+            </Layout>           
           </div>
           )
       }

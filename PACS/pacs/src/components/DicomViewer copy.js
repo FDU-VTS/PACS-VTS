@@ -5,7 +5,7 @@ import './DicomViewer.css'
 
 
 var first = true;
-class DicomViewer extends Component {
+class DicomViewer2 extends Component {
     constructor(props) {
         super(props);
         this.rayCaster = new THREE.Raycaster();
@@ -27,7 +27,7 @@ class DicomViewer extends Component {
         const rayCaster = this.rayCaster;
         const clientX = e.clientX;
         const clientY = e.clientY;
-        const array = DicomViewer.getMousePosition(e.target, clientX, clientY);
+        const array = DicomViewer2.getMousePosition(e.target, clientX, clientY);
         const vecPos = new THREE.Vector2(array[0] * 2 - 1, -(array[1] * 2) + 1);
         rayCaster.setFromCamera(vecPos, camera);
         const intersects = rayCaster.intersectObjects(scene.children);
@@ -254,4 +254,4 @@ class DicomViewer extends Component {
     }
 }
 
-export default DicomViewer;
+export default DicomViewer2;

@@ -4,7 +4,7 @@ import 'antd/dist/antd.css';
 import { Slider, InputNumber, Row, Col } from 'antd';
 
 
-class Three extends React.Component {
+class SliderIn extends React.Component {
   constructor(props) {
     super(props);
     this.setState.bind(this);
@@ -59,4 +59,4 @@ class Three extends React.Component {
 
 
 
-export default Three;
+export default SliderIn;

@@ -1,7 +1,13 @@
 import React, {Component} from 'react';
 import DicomService from '../services/DicomService';
 import DicomViewer from '../components/DicomViewer';
+import DicomViewer2 from '../components/DicomViewer copy';
 import SeriesViewerTable from '../components/SeriesViewerTable';
+import SliderIn from '../components/SliderIn'
+import {Grid} from "semantic-ui-react";
+import { Row, Col } from 'antd';
+import 'antd/dist/antd.css';
+
 
 class SeriesViewerPage extends Component {
     constructor(props) {
@@ -40,6 +46,18 @@ class SeriesViewerPage extends Component {
         }
     }
 
+    setInstance = (indexInput) => {
+        const currentInstanceId = this.state.index;
+        const instancesCount = (this.state.instances || []).length;
+        if (instancesCount === 0)
+            return;
+        if (indexInput > instancesCount)
+            return;
+        else
+            this.setState({index: indexInput, rotation: null});
+        this.setState({flagzoom: false});
+    }
+
     nextInstance = () => {
         const currentInstanceId = this.state.index;
         const instancesCount = (this.state.instances || []).length;
@@ -73,7 +91,7 @@ class SeriesViewerPage extends Component {
             this.timer = setInterval(() => {(
                 this.nextInstance()
                 )
-            }, 1000);
+            }, 100);
         }
         else{
             clearInterval(this.timer);
@@ -102,6 +120,7 @@ class SeriesViewerPage extends Component {
         const index = this.state.index;
         const instances = this.state.instances;
         const instance = instances[index]
+        const instance2 = instances[index+1]
         // const seriesId = instance.id;
         if(instances && instances.length > 0){
             console.log("测试",instances,instance,instance.id);
@@ -116,14 +135,25 @@ class SeriesViewerPage extends Component {
             flagzoom:this.state.flagzoom,
             ifplay:this.state.ifplay
         };
+        const instanceLength = (this.state.instances || []).length;
         
         return (
-            <div>
+            <div style={{background:"black"}} tabIndex={'0'} >
                 {/* 把一个instance传过去 */}
+                {/* <SliderIn onSetInstance={this.setInstance} maxValue={instanceLength}/> */}
                 <SeriesViewerTable onPrevInstance={this.prevInstance} onNextInstance={this.nextInstance} 
                 onPlay={this.play} onZoomin={this.zoomin} onZoomout={this.zoomout}
                 onRotateLeft={this.rotateLeft} onRotateRight={this.rotateRight}/>
-                <DicomViewer instance={instance} {...viewerProps}/>
+                <SliderIn onSetInstance={this.setInstance} maxValue={instanceLength}/>
+                {/* <DicomViewer instance={instance} {...viewerProps}/> */}
+                <Row>
+                    <Col span={11}>
+                        <DicomViewer instance={instance} {...viewerProps}/>
+                    </Col>
+                    <Col span={11}>
+                        <DicomViewer2 instance={instance} {...viewerProps}/>
+                    </Col>
+                </Row>
             </div>
         )
     }
