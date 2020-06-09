@@ -91,6 +91,11 @@ class PatientsTable extends React.Component {
         key: 'patient_id',
         width: '15%',
         ...this.getColumnSearchProps('patient_id'),
+        render: text => (<div>
+          <a href = {`/patienttostudy/${text}`}>
+            {text}
+          </a>
+        </div>),
       },
       {
         title: 'Patient Name',

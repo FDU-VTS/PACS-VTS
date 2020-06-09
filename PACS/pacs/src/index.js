@@ -12,6 +12,9 @@ import * as serviceWorker from './serviceWorker';
 import StudySeriesPage from "./pages/StudySeriesPage"
 import Three from "./pages/Three"
 import SeriesViewerPage from "./pages/SeriesViewerPage"
+import StudytoSeriesPage from "./pages/StudytoSeriesPage"
+import SeriesViewerminiPage from "./pages/SeriesViewerminiPage"
+import PatienttoStudyPage from "./pages/PatienttoStudyPage"
 // import Slider from './components/Slider'
 
 const store = createStore(combineReducers({locale}));
@@ -22,9 +25,12 @@ ReactDOM.render(
       <div>
         <Route exact path='/studies' component={StudiesPage}/>
         <Route path='/patients' component={PatientsPage}/>
+        <Route path='/patienttostudy/:id' component={PatienttoStudyPage}/>
         <Route path='/app' component={App}/>
         <Route path='/studies/:id' component={StudySeriesPage}/>
         <Route path='/series/:id' component={SeriesViewerPage}/>
+        <Route path='/studiestoseries/:id' component={StudytoSeriesPage}/>
+        <Route path='/miniseries/:id1/:id2/:id3/:id4' component={SeriesViewerminiPage}/>
         <Route path='/threetest' component={Three}/>
         <Route exact path='/' component={PatientsPage}/>
       </div>

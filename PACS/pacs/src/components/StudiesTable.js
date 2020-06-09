@@ -93,7 +93,7 @@ class StudiesTable extends React.Component {
         key: 'study_id',
         ...this.getColumnSearchProps('study_id'),
         render: text => (<div>
-          <a href = {`/studies/${text}`}>
+          <a href = {`/studiestoseries/${text}`}>
             {text}
           </a>
         </div>),
@@ -103,6 +103,12 @@ class StudiesTable extends React.Component {
         dataIndex: 'patient_name',
         key: 'patient_name',
         ...this.getColumnSearchProps('patient_name'),
+      },
+      {
+        title: 'Patient ID',
+        dataIndex: 'patient_id',
+        key: 'patient_id',
+        ...this.getColumnSearchProps('patient_id'),
       },
       {
         title: 'Study Description',

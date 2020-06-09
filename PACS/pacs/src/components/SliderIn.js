@@ -12,12 +12,12 @@ class SliderIn extends React.Component {
     };
   }
   state = {
-    inputValue: 1,
+    inputValue: this.props.inputValue,
     maxValue: this.props.maxValue
   };
 
   onChange = value => {
-    this.onSetInstance(value);
+    this.onSetInstance(value-1);
     this.setState({
       inputValue: value,
     });
@@ -28,7 +28,7 @@ class SliderIn extends React.Component {
   }
 
   render() {
-    const { inputValue } = this.state;
+    const inputValue = this.props.inputValue;
 
     const maxValue = this.props.maxValue;
     console.log("序列长度", maxValue)
@@ -36,16 +36,16 @@ class SliderIn extends React.Component {
       <Row>
         <Col span={20}>
           <Slider
-            min={1}
-            max={maxValue-1}
+            min={0}
+            max={maxValue}
             onChange={this.onChange}
             value={typeof inputValue === 'number' ? inputValue : 0}
           />
         </Col>
         <Col span={4}>
           <InputNumber
-            min={1}
-            max={maxValue-1}
+            min={0}
+            max={maxValue}
             style={{ margin: '0 16px' }}
             value={inputValue}
             onChange={this.onChange}

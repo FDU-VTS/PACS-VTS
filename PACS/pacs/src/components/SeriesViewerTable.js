@@ -9,7 +9,9 @@ import {
     ZoomOutOutlined,
     RedoOutlined,
     UndoOutlined,
-    DownOutlined
+    DownOutlined,
+    StepForwardOutlined,
+    FastForwardOutlined
   } from '@ant-design/icons';
 import {Link} from "react-router-dom";
 import DicomViewer from './DicomViewer';
@@ -101,6 +103,10 @@ class SeriesViewerTable extends React.Component {
         };
         this.onPlay = this.props.onPlay || function () {
         };
+        this.onMPlay = this.props.onMPlay || function () {
+        };
+        this.onFPlay = this.props.onFPlay || function () {
+        };
         this.onZoomin = this.props.onZoomin || function () {
         };
         this.onZoomout = this.props.onZoomout || function () {
@@ -155,6 +161,12 @@ class SeriesViewerTable extends React.Component {
                 </Menu.Item>
                 <Menu.Item>
                   <CaretRightOutlined style={buttonstyle} onClick={this.onPlay}/>
+                </Menu.Item>
+                <Menu.Item>
+                  <StepForwardOutlined style={buttonstyle} onClick={this.onMPlay}/>
+                </Menu.Item>
+                <Menu.Item>
+                  <FastForwardOutlined style={buttonstyle} onClick={this.onFPlay}/>
                 </Menu.Item>
                 <Menu.Item>
                   <ZoomInOutlined style={buttonstyle} onClick={this.onZoomin}/>

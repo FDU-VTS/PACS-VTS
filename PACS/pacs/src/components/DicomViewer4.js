@@ -3,16 +3,47 @@ import * as THREE from 'three';
 import DicomService from '../services/DicomService';
 import './DicomViewer.css'
 import SliderIn from './SliderIn'
+import 'antd/dist/antd.css';
+import { Button, Tooltip } from 'antd';
+import {
+    BankOutlined,
+    ArrowLeftOutlined,
+    ArrowRightOutlined,
+    CaretRightOutlined,
+    ZoomInOutlined,
+    ZoomOutOutlined,
+    RedoOutlined,
+    UndoOutlined,
+    DownOutlined
+  } from '@ant-design/icons';
 
 var first = true;
-class DicomViewer extends Component {
+class DicomViewer4 extends Component {
     constructor(props) {
         super(props);
+        this.onSetInstance = this.props.onSetInstance || function () {
+        };
+        this.onNextInstance = this.props.onNextInstance || function () {
+        };
+        this.onPrevInstance = this.props.onPrevInstance || function () {
+        };
+        this.onPlay = this.props.onPlay || function () {
+        };
+        this.onZoomin = this.props.onZoomin || function () {
+        };
+        this.onZoomout = this.props.onZoomout || function () {
+        };
+        this.onRotateLeft = this.props.onRotateLeft || function () {
+        };
+        this.onRotateRight = this.props.onRotateRight || function () {
+        };
+        this.maxValue = this.props.maxValue;
         this.rayCaster = new THREE.Raycaster();
         this.state = {
             seedPoint: new THREE.Vector2(-1,-1)
         }
         this.setState = this.setState.bind(this);
+        
     }
 
     onWindowRisize = () => {
@@ -27,7 +58,7 @@ class DicomViewer extends Component {
         const rayCaster = this.rayCaster;
         const clientX = e.clientX;
         const clientY = e.clientY;
-        const array = DicomViewer.getMousePosition(e.target, clientX, clientY);
+        const array = DicomViewer4.getMousePosition(e.target, clientX, clientY);
         const vecPos = new THREE.Vector2(array[0] * 2 - 1, -(array[1] * 2) + 1);
         rayCaster.setFromCamera(vecPos, camera);
         const intersects = rayCaster.intersectObjects(scene.children);
@@ -55,6 +86,7 @@ class DicomViewer extends Component {
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.node.clientWidth, this.node.clientHeight);
         this.node.onclick = this.onMouseClick;
+
         
     }
     componentWillMount() {
@@ -78,14 +110,16 @@ class DicomViewer extends Component {
     }
 
     componentDidUpdate() {
+        console.log("window1属性", this.props.window)
         //alert("componentDidUpdate")
         const alt = `didupdate ${this.props.rotation}`
         // alert(alt);
+        const isLoaded = this.props.isLoaded;
         const instance = this.props.instance;
-        const url = `/api/instances/${instance?instance.id:instance}/image`;
+        var url = `/api/instances/${instance?instance.id:instance}/image`;
         //设置场景 渲染器 和  相机
-        const w = parseFloat(instance['columns']);
-        const h = parseFloat(instance['rows']);
+        const w = parseFloat(instance?instance['columns']:instance);
+        const h = parseFloat(instance?instance['rows']:instance);
         // console.log("长宽",w,h)
         
         this.node.appendChild(this.renderer.domElement);
@@ -123,22 +157,22 @@ class DicomViewer extends Component {
                 this.rect = new THREE.Mesh(geometry, material);
                 console.log("第一次height");
                 console.log(this.rect.geometry.parameters.height);
-                if (this.props.rotation === 'left' && !this.props.flagzoom){
+                if (this.props.rotation === 'left' && !this.props.flagzoom && this.props.window){
                     this.rect.rotation.z -= 0.5;
                 }                
-                else if (this.props.rotation === 'right' && !this.props.flagzoom)
+                else if (this.props.rotation === 'right' && !this.props.flagzoom && this.props.window)
                     this.rect.rotation.z += 0.5;
                 // else
                 //     this.rect.rotation.z = 0.0;
                 
-                    if(this.props.ifzoom === 'in' && this.props.flagzoom){
+                    if(this.props.ifzoom === 'in' && this.props.flagzoom && this.props.window) {
                         if(this.camera.fov > 0){this.camera.fov -=5;}
                         else{this.camera.fov=0;}
                         // this.rect.geometry.parameters.height += 0.5;
                         // this.rect.geometry.parameters.width +=0.5;
                         this.camera.fov -=10;
                     }
-                    else if(this.props.ifzoom === 'out' && this.props.flagzoom){
+                    else if(this.props.ifzoom === 'out' && this.props.flagzoom && this.props.window){
                         if(this.camera.fov < 180){this.camera.fov +=5;}
                         else{this.camera.fov=180;}
                         // this.rect.geometry.parameters.height -= 0.5;
@@ -149,21 +183,21 @@ class DicomViewer extends Component {
                 this.camera.position.z = 3.5;
                 first = false;
             }
-            if (this.props.rotation === 'left' && !this.props.flagzoom){
+            if (this.props.rotation === 'left' && !this.props.flagzoom && this.props.window){
                 this.rect.rotation.z -= 0.5;
             }                
-            else if (this.props.rotation === 'right' && !this.props.flagzoom)
+            else if (this.props.rotation === 'right' && !this.props.flagzoom && this.props.window)
                 this.rect.rotation.z += 0.5;
             // else
             //     this.rect.rotation.z = 0.0;
             
-            if(this.props.ifzoom === 'in' && this.props.flagzoom){
+            if(this.props.ifzoom === 'in' && this.props.flagzoom && this.props.window){
                 if(this.camera.fov > 0){this.camera.fov -=5;}
                 else{this.camera.fov=0;}
                 // this.rect.geometry.parameters.height += 0.5;
                 // this.rect.geometry.parameters.width +=0.5;
             }
-            else if(this.props.ifzoom === 'out' && this.props.flagzoom){
+            else if(this.props.ifzoom === 'out' && this.props.flagzoom && this.props.window){
                 if(this.camera.fov < 180){this.camera.fov +=5;}
                 else{this.camera.fov=180;}
                 // this.rect.geometry.parameters.height -= 0.5;
@@ -220,11 +254,12 @@ class DicomViewer extends Component {
 
     render() {
         //alert("父组件render了")
-        let maxValue = this.props.maxValue;
         let instance = this.props.instance;
+        let maxValue = this.props.maxValue;
         console.log('viewer组件获取的instance',instance)
+        console.log("获取的最大值",maxValue)
         return (
-            <div ref={node => this.node = node} style={{height: window.innerHeight}}>
+            <div ref={node => this.node = node} style={{height: window.innerHeight/2}}>
                 <div>
                     <SliderIn onSetInstance={this.onSetInstance} maxValue={maxValue} inputValue={instance?instance['instance_number']:1}/>
                 </div>
@@ -252,10 +287,25 @@ class DicomViewer extends Component {
                         Color Scheme: {instance?instance['photometric_interpretation']:instance}
                     </div>
                 </div>
+                <div>
+                    <Button type="primary" shape="circle" icon={<ArrowLeftOutlined />} onClick={this.onPrevInstance}/>
+                    &nbsp
+                    <Button type="primary" shape="circle" icon={<ArrowRightOutlined onClick={this.onNextInstance}/>} />
+                    &nbsp
+                    <Button type="primary" shape="circle" icon={<ZoomInOutlined onClick={this.onZoomin}/>} />
+                    &nbsp
+                    <Button type="primary" shape="circle" icon={<ZoomOutOutlined onClick={this.onZoomout}/>} />
+                    &nbsp
+                    <Button type="primary" shape="circle" icon={<CaretRightOutlined onClick={this.onPlay}/>} />
+                    &nbsp
+                    <Button type="primary" shape="circle" icon={<RedoOutlined onClick={this.onRotateLeft}/>} />
+                    &nbsp
+                    <Button type="primary" shape="circle" icon={<UndoOutlined onClick={this.onRotateRight}/>} />
+                </div>
                 
             </div>
         )
     }
 }
 
-export default DicomViewer;
+export default DicomViewer4;

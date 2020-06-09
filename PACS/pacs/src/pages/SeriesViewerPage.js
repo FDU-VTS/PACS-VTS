@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import DicomService from '../services/DicomService';
 import DicomViewer from '../components/DicomViewer';
-import DicomViewer2 from '../components/DicomViewer copy';
+import DicomViewer2 from '../components/DicomViewer2';
 import SeriesViewerTable from '../components/SeriesViewerTable';
 import SliderIn from '../components/SliderIn'
 import {Grid} from "semantic-ui-react";
@@ -99,6 +99,61 @@ class SeriesViewerPage extends Component {
         this.setState({flagzoom: false});
     };
 
+    mplay = () => {
+        if(!this.state.ifplay){
+            this.setState({ifplay:true});  
+            this.setState({flagzoom: false});      
+            this.timer = setInterval(() => {(
+                this.mnextInstance()
+                )
+            }, 100);
+        }
+        else{
+            clearInterval(this.timer);
+            this.setState({ifplay:false})}
+        this.setState({flagzoom: false});
+    };
+
+    fplay = () => {
+        if(!this.state.ifplay){
+            this.setState({ifplay:true});  
+            this.setState({flagzoom: false});      
+            this.timer = setInterval(() => {(
+                this.fnextInstance()
+                )
+            }, 100);
+        }
+        else{
+            clearInterval(this.timer);
+            this.setState({ifplay:false})}
+        this.setState({flagzoom: false});
+    };
+
+    mnextInstance = () => {
+        const currentInstanceId = this.state.index;
+        const instancesCount = (this.state.instances || []).length;
+        if (instancesCount === 0)
+            return;
+        if (currentInstanceId + 3 >= instancesCount)
+            this.setState({index: 0, rotation: null});
+        else
+            this.setState({index: currentInstanceId + 3, rotation: null});
+        this.setState({flagzoom: false});
+    };
+
+    fnextInstance = () => {
+        const currentInstanceId = this.state.index;
+        const instancesCount = (this.state.instances || []).length;
+        if (instancesCount === 0)
+            return;
+        if (currentInstanceId + 5 >= instancesCount)
+            this.setState({index: 0, rotation: null});
+        else
+            this.setState({index: currentInstanceId + 5, rotation: null});
+        this.setState({flagzoom: false});
+    };
+
+
     zoomin = () => {
         this.setState({ifzoom: 'in',flagzoom:true});
     };
@@ -143,15 +198,16 @@ class SeriesViewerPage extends Component {
                 {/* <SliderIn onSetInstance={this.setInstance} maxValue={instanceLength}/> */}
                 <SeriesViewerTable onPrevInstance={this.prevInstance} onNextInstance={this.nextInstance} 
                 onPlay={this.play} onZoomin={this.zoomin} onZoomout={this.zoomout}
-                onRotateLeft={this.rotateLeft} onRotateRight={this.rotateRight}/>
-                <SliderIn onSetInstance={this.setInstance} maxValue={instanceLength}/>
+                onRotateLeft={this.rotateLeft} onRotateRight={this.rotateRight} onMNextInstance={this.mnextInstance} onFNextInstance={this.fnextInstance} 
+                onPlay={this.play} onMPlay={this.mplay} onFPlay={this.fplay}/>
+                {/* <SliderIn onSetInstance={this.setInstance} maxValue={instanceLength}/> */}
                 {/* <DicomViewer instance={instance} {...viewerProps}/> */}
                 <Row>
-                    <Col span={11}>
-                        <DicomViewer instance={instance} {...viewerProps}/>
+                    <Col span={20}>
+                        <DicomViewer instance={instance} {...viewerProps} maxValue={instanceLength}/>
                     </Col>
                     <Col span={11}>
-                        <DicomViewer2 instance={instance} {...viewerProps}/>
+                        {/* <DicomViewer2 instance={instance} {...viewerProps}/> */}
                     </Col>
                 </Row>
             </div>

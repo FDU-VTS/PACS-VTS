@@ -23,6 +23,7 @@ class StudiesPage extends Component {
             console.log(studyList);
             studyList.map(study => {
                 show.push({
+                    patient_id: study.patient["patient_id"],
                     patient_name: study.patient["patient_name"],
                     study_id: study.id,
                     study_description: study.study_description,

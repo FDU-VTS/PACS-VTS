@@ -35,14 +35,6 @@ class PatientsPage extends Component {
                             images_count: study.images_count,
                         })
                     //}
-                    show.push({
-                        patient_name: study.patient_name,
-                        patient_id: study.patient_id,
-                        patient_sex: study.patient_sex,
-                        patient_birthdate: study.patient_birthdate,
-                        patient_age: study.patient_age,
-                        images_count: study.images_count,
-                    })
                 });
                 this.setState({
                     studies: studyList,
