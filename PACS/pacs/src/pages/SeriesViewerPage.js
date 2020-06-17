@@ -58,6 +58,10 @@ class SeriesViewerPage extends Component {
         this.setState({flagzoom: false});
     }
 
+    setColorScale = (inputText) => {
+        this.setState({colorScale: inputText,});
+    }
+
     nextInstance = () => {
         const currentInstanceId = this.state.index;
         const instancesCount = (this.state.instances || []).length;
@@ -204,7 +208,7 @@ class SeriesViewerPage extends Component {
                 {/* <DicomViewer instance={instance} {...viewerProps}/> */}
                 <Row>
                     <Col span={20}>
-                        <DicomViewer instance={instance} {...viewerProps} maxValue={instanceLength}/>
+                        <DicomViewer instance={instance} {...viewerProps} maxValue={instanceLength} onSetInstance={this.setInstance} onSetColorScale={this.setColorScale}/>
                     </Col>
                     <Col span={11}>
                         {/* <DicomViewer2 instance={instance} {...viewerProps}/> */}

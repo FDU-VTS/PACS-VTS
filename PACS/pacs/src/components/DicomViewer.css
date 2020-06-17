@@ -11,13 +11,23 @@
     background:transparent;
 }
 
-.leftTop2{
+.rightTop{
     position: absolute;
-    top: 30%;
-    left: 10px;
+    top: 120px;
+    right: 50px;
     z-index: 5;
     display:block;
-    text-align: left;
+    text-align: right;
+    color: white;
+}
+
+.rightTop2{
+    position: absolute;
+    top: 120px;
+    right: 0px;
+    z-index: 5;
+    display:block;
+    text-align: right;
     color: white;
 }
 

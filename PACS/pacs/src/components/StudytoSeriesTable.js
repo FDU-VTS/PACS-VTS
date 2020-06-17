@@ -167,7 +167,7 @@ class StudytoSeriesTable extends Component {;
                             <Link to='/studies'>Studies</Link>
                         </Menu.Item>
                         <Menu.Item key="3" >
-                            <Link to='/dicom_nodes'>DICOMServer</Link>
+                            <Link to='/api/dcm/upload'>DICOMServer</Link>
                         </Menu.Item>
                         </Menu>
                     </Header>

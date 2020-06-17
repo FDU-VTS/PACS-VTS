@@ -1,8 +1,19 @@
 import React, {Component} from 'react';
-import * as THREE from 'three';
+// import * as THREE from 'three';
 import DicomService from '../services/DicomService';
 import './DicomViewer.css'
 import SliderIn from './SliderIn'
+import BrightnessSlider from './BrightnessSlider'
+const THREE = window.THREE = require('three');
+
+require('three/examples/js/postprocessing/EffectComposer.js');
+require('three/examples/js/postprocessing/ShaderPass.js');
+require('three/examples/js/postprocessing/RenderPass.js');
+require('three/examples/js/shaders/DotScreenShader.js');
+require('three/examples/js/shaders/BrightnessContrastShader.js');
+require('three/examples/js/shaders/CopyShader.js');
+
+
 
 var first = true;
 class DicomViewer extends Component {
@@ -10,11 +21,25 @@ class DicomViewer extends Component {
         super(props);
         this.rayCaster = new THREE.Raycaster();
         this.state = {
-            seedPoint: new THREE.Vector2(-1,-1)
+            seedPoint: new THREE.Vector2(-1,-1),
+            brightness:0,
+            contrast:0,
         }
         this.setState = this.setState.bind(this);
+        this.onSetInstance = this.props.onSetInstance || function () {
+        };
+        this.onSetColorScale = this.props.onSetColorScale || function () {
+        };
     }
 
+    onSetBrightness = (value) => {
+        this.setState({brightness:value});
+    }
+
+    onSetContrast = (value) => {
+        this.setState({contrast:value});
+    }
+    
     onWindowRisize = () => {
         this.camera.aspect = this.node.clientWidth / this.node.clientHeight;
         this.camera.updateProjectionMatrix();
@@ -55,6 +80,7 @@ class DicomViewer extends Component {
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.node.clientWidth, this.node.clientHeight);
         this.node.onclick = this.onMouseClick;
+        this.composer=new THREE.EffectComposer(this.renderer);
         
     }
     componentWillMount() {
@@ -112,7 +138,7 @@ class DicomViewer extends Component {
             const material = new THREE.ShaderMaterial({
                 uniforms: uniforms,
                 vertexShader: vertShader,
-                fragmentShader: fragShader
+                fragmentShader: fragShader,
             });
             
             
@@ -189,7 +215,18 @@ class DicomViewer extends Component {
             this.camera.matrixWorldNeedsUpdate = true;
             this.camera.updateProjectionMatrix();
             console.log("当前拖动序号", instance.id)
-            this.renderer.render(this.scene, this.camera);
+
+            this.renderPass=new THREE.RenderPass(this.scene,this.camera);
+            this.composer.addPass(this.renderPass)
+            var effectCopy = new THREE.ShaderPass(THREE.CopyShader);
+            effectCopy.renderToScreen = true;
+            this.BrightnessContrastShader=new THREE.ShaderPass(THREE.BrightnessContrastShader);
+            this.BrightnessContrastShader.uniforms['brightness'].value=this.state.brightness;
+            this.BrightnessContrastShader.uniforms['contrast'].value=this.state.contrast;
+            this.composer.addPass(this.BrightnessContrastShader);
+            this.composer.addPass(effectCopy);
+            this.renderer.render(this.scene, this.camera); 
+            this.composer.render();
             // this.animate()
         });
 
@@ -226,8 +263,17 @@ class DicomViewer extends Component {
         return (
             <div ref={node => this.node = node} style={{height: window.innerHeight}}>
                 <div>
-                    <SliderIn onSetInstance={this.onSetInstance} maxValue={maxValue} inputValue={instance?instance['instance_number']:1}/>
+                    
+                    <SliderIn  onSetInstance={this.onSetInstance} maxValue={maxValue} inputValue={instance?instance['instance_number']:1}/>
                 </div>
+                <div className={'rightTop'}>
+                    
+                    <BrightnessSlider onSetColorScale={this.onSetColorScale}  onSetContrast={this.onSetContrast} onSetBrightness={this.onSetBrightness}/>
+                </div>
+                {/* <div className={'rightTop2'}>
+                    <p style={{color:'white'}}>对比度</p> 
+                    <ContrastSlider onSetContrast={this.onSetContrast}/>
+                </div> */}
                 <div className={'leftTop'} >
                     <div>img:{instance?instance.id:instance}</div>
                     <div>
