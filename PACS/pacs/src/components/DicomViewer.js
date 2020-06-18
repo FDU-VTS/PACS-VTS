@@ -14,7 +14,8 @@ require('three/examples/js/shaders/BrightnessContrastShader.js');
 require('three/examples/js/shaders/CopyShader.js');
 
 
-
+var uv = undefined;
+var uv2 = undefined;
 var first = true;
 class DicomViewer extends Component {
     constructor(props) {
@@ -55,15 +56,52 @@ class DicomViewer extends Component {
         const array = DicomViewer.getMousePosition(e.target, clientX, clientY);
         const vecPos = new THREE.Vector2(array[0] * 2 - 1, -(array[1] * 2) + 1);
         rayCaster.setFromCamera(vecPos, camera);
-        const intersects = rayCaster.intersectObjects(scene.children);
+        const intersects = rayCaster.intersectObjects(scene.children); 
+        
         if (intersects && intersects.length > 0) {
             const intersectedImg = intersects[0];
-            const uv = intersectedImg.uv;
-            if (uv) {
-                console.log(uv);
+            if(uv===undefined){
+                uv = intersectedImg.uv;
                 this.setState({seedPoint: new THREE.Vector2(uv.x, uv.y)});
             }
+            else if(uv2===undefined){
+                uv2 = intersectedImg.uv;
+                this.setState({seedPoint: new THREE.Vector2(uv2.x, uv2.y)});
+            }
+            else {
+                uv=undefined;
+                uv2=undefined;
+                // this.scene.children.remove()
+                this.scene.children.shift();
+                // console.log("孩儿们",this.scene.children);
+            }
+            
+            
+            if (uv && uv2) {
+                
+                var a = uv.x - uv2.x;
+                var b = uv.y - uv2.y;
+                var dist = Math.sqrt(a*a+b*b)
+                var geometryline = new THREE.Geometry();
+                geometryline.vertices.push(
+                    new THREE.Vector3(uv.x*3-1.5, uv.y*3-1.5, 0),
+                    new THREE.Vector3(uv2.x*3-1.5, uv2.y*3-1.5, 0)
+                );
+                geometryline.colors.push(
+                    new THREE.Color( 0xFF0000 ), 
+                    new THREE.Color( 0xFF0000 )
+                )
+                var materialline = new THREE.LineBasicMaterial({ vertexColors: true });
+                this.line = new THREE.Line(geometryline, materialline);
+                this.scene.add(this.line)
+                // console.log('坐标',intersectedImg.point,uv);
+                // alert(`${uv.x} ${uv.y}`);
+                setTimeout(()=>{alert(`测量距离为${dist}`)},100);
+                
+                
+            }
         }
+        
     };
 
     static getMousePosition(dom, x, y) {
@@ -170,7 +208,6 @@ class DicomViewer extends Component {
                         // this.rect.geometry.parameters.height -= 0.5;
                         // this.rect.geometry.parameters.width -=0.5;
                     }
-
                 this.scene.add(this.rect);
                 this.camera.position.z = 3.5;
                 first = false;
@@ -270,10 +307,6 @@ class DicomViewer extends Component {
                     
                     <BrightnessSlider onSetColorScale={this.onSetColorScale}  onSetContrast={this.onSetContrast} onSetBrightness={this.onSetBrightness}/>
                 </div>
-                {/* <div className={'rightTop2'}>
-                    <p style={{color:'white'}}>对比度</p> 
-                    <ContrastSlider onSetContrast={this.onSetContrast}/>
-                </div> */}
                 <div className={'leftTop'} >
                     <div>img:{instance?instance.id:instance}</div>
                     <div>

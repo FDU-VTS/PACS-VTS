@@ -16,6 +16,7 @@ import StudytoSeriesPage from "./pages/StudytoSeriesPage"
 import SeriesViewerminiPage from "./pages/SeriesViewerminiPage"
 import PatienttoStudyPage from "./pages/PatienttoStudyPage"
 import DicomNodesPage from "./pages/DicomNodesPage";
+import Test from "./pages/Test"
 // import Slider from './components/Slider'
 
 const store = createStore(combineReducers({locale}));
@@ -31,9 +32,10 @@ ReactDOM.render(
         <Route path='/studies/:id' component={StudySeriesPage}/>
         <Route path='/series/:id' component={SeriesViewerPage}/>
         <Route path='/studiestoseries/:id' component={StudytoSeriesPage}/>
+        <Route path='/api/dcm/upload' component={DicomNodesPage}/>
         <Route path='/miniseries/:id1/:id2/:id3/:id4' component={SeriesViewerminiPage}/>
         <Route path='/threetest' component={Three}/>
-        <Route path='/api/dcm/upload' component={DicomNodesPage}/>
+        <Route path='/test' component={Test}/>
         <Route exact path='/' component={PatientsPage}/>
       </div>
       </BrowserRouter>

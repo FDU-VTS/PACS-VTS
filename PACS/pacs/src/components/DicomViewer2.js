@@ -318,7 +318,6 @@ class DicomViewer2 extends Component {
                     </div>
                 </div>
                 <div>
-                    &nbsp
                     <Button type="primary" shape="circle" icon={<ArrowLeftOutlined />} onClick={this.onPrevInstance}/>
                     &nbsp
                     <Button type="primary" shape="circle" icon={<ArrowRightOutlined onClick={this.onNextInstance}/>} />

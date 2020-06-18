@@ -11,88 +11,14 @@ import {
     UndoOutlined,
     DownOutlined,
     StepForwardOutlined,
-    FastForwardOutlined
+    FastForwardOutlined,
+    ControlOutlined
   } from '@ant-design/icons';
 import {Link} from "react-router-dom";
 import DicomViewer from './DicomViewer';
 
 // http://315v841f37.zicp.vip/
-const menu1 = (
-    <Menu>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href=" ">
-          it's ok
-        </a >
-      </Menu.Item>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
-          2nd menu item
-        </a >
-      </Menu.Item>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
-          3rd menu item
-        </a >
-      </Menu.Item>
-    </Menu>
-  );
-const menu2 = (
-    <Menu>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
-          1st menu item
-        </a >
-      </Menu.Item>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
-          2nd menu item
-        </a >
-      </Menu.Item>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
-          3rd menu item
-        </a >
-      </Menu.Item>
-    </Menu>
-  );
-  const menu3 = (
-    <Menu>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
-          1st menu item
-        </a >
-      </Menu.Item>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
-          2nd menu item
-        </a >
-      </Menu.Item>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
-          3rd menu item
-        </a >
-      </Menu.Item>
-    </Menu>
-  );
-  const menu4 = (
-    <Menu>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
-          1st menu item
-        </a >
-      </Menu.Item>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
-          2nd menu item
-        </a >
-      </Menu.Item>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
-          3rd menu item
-        </a >
-      </Menu.Item>
-    </Menu>
-  );
+
 class SeriesViewerTable extends React.Component {
     constructor(props) {
         super(props);
@@ -115,9 +41,128 @@ class SeriesViewerTable extends React.Component {
         };
         this.onRotateRight = this.props.onRotateRight || function () {
         };
+        this.onSetColorScale = this.props.onSetColorScale || function () {
+        };
+        this.onPlugin = this.props.onPlugin || function () {
+        };
       }
       
       render() {
+        const menu1 = (
+          <Menu>
+            <Menu.Item>
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale("main")}>
+                main
+              </a >
+            </Menu.Item>
+            <Menu.Item>
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale("heatmap")}>
+                heatmap
+              </a >
+            </Menu.Item>
+            <Menu.Item>
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('inverseHeatmap')}>
+                inverseHeatmap
+              </a >
+            </Menu.Item>
+            <Menu.Item>
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('hotRed')} >
+                hotRed
+              </a >
+            </Menu.Item>
+            <Menu.Item>
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('hotGreen')} >
+                hotGreen
+              </a >
+            </Menu.Item>
+            <Menu.Item>
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('hotBlue')}>
+                hotBlue
+              </a >
+            </Menu.Item>
+            <Menu.Item>
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('inverse')}>
+                inverse
+              </a >
+            </Menu.Item>
+          </Menu>
+        );
+        const menu2 = (
+          <Menu>
+            <Menu.Item>
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale("main")}>
+                main
+              </a >
+            </Menu.Item>
+            <Menu.Item>
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('sobel')}>
+                sobel
+              </a >
+            </Menu.Item>
+            <Menu.Item>
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('sharpen')} >
+                sharpen
+              </a >
+            </Menu.Item>
+            <Menu.Item>
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('emboss')} >
+                emboss
+              </a >
+            </Menu.Item>
+            <Menu.Item>
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('laplacian')}>
+                laplacian
+              </a >
+            </Menu.Item>
+            <Menu.Item>
+              <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('medianBlur')}>
+                medianBlur
+              </a >
+            </Menu.Item>
+          </Menu>
+        );
+        console.log("plugins3",this.props.data);
+        const ids = [];
+        this.props.data.map(plugin=>{
+          ids.push({
+            singleid:plugin.plugin_id
+          });
+        })
+        console.log("id",ids[0],"+",ids[1]);
+        const id1=ids[0]
+          const menu3 = (
+            <Menu>
+              <Menu.Item>
+                <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onPlugin(this.props.instance.id)}>
+                  fcm
+                </a >
+              </Menu.Item>
+              <Menu.Item>
+                <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onPlugin(this.props.instance.id)}>
+                  kmeans
+                </a >
+              </Menu.Item>
+            </Menu>
+          );
+          const menu4 = (
+            <Menu>
+              <Menu.Item>
+                <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
+                  1st menu item
+                </a >
+              </Menu.Item>
+              <Menu.Item>
+                <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
+                  2nd menu item
+                </a >
+              </Menu.Item>
+              <Menu.Item>
+                <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
+                  3rd menu item
+                </a >
+              </Menu.Item>
+            </Menu>
+          );
         const { Header, Content } = Layout;
         const buttonstyle = {color:'white', fontSize:30};
         const searchbuttonstyle = {color:'white', fontSize:25};
@@ -141,21 +186,21 @@ class SeriesViewerTable extends React.Component {
                 <Menu.Item>
                   <Dropdown overlay={menu1}>
                       <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={searchstyle}>
-                      广告位招租1<DownOutlined style={searchbuttonstyle}/>
+                      Color<DownOutlined style={searchbuttonstyle}/>
                       </a >
                   </Dropdown>
                 </Menu.Item>
                 <Menu.Item>
                   <Dropdown overlay={menu2}>
                       <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={searchstyle}>
-                      广告位招租2<DownOutlined style={searchbuttonstyle}/>
+                      Filter<DownOutlined style={searchbuttonstyle}/>
                       </a >
                   </Dropdown>
                 </Menu.Item>
                 <Menu.Item>
                   <Dropdown overlay={menu3}>
                       <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={searchstyle}>
-                      广告位招租3<DownOutlined style={searchbuttonstyle}/>
+                      Plugins<DownOutlined style={searchbuttonstyle}/>
                       </a >
                   </Dropdown>
                 </Menu.Item>

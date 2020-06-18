@@ -8,9 +8,11 @@ import DicomViewer4 from '../components/DicomViewer4';
 import SeriesViewerTable from '../components/SeriesViewerTable';
 import SliderIn from '../components/SliderIn'
 import {Grid} from "semantic-ui-react";
-import { Row, Col } from 'antd';
+import { Row, Col,Button,Menu } from 'antd';
 import 'antd/dist/antd.css';
 import { Texture } from 'three';
+import { BankOutlined,  } from '@ant-design/icons';
+import {Link} from "react-router-dom";
 
 const instance0 = {
     id:'',
@@ -751,8 +753,15 @@ class SeriesViewerminiPage extends Component {
         
         return (
             <div style={{background:"black"}} tabIndex={'0'} >
-                <br/>
-                <br/>
+                <div style={{padding:'10px 0px 10px 25px'}}>
+                <Menu theme="dark" mode="horizontal">
+                <Menu.Item>
+                  <Link to='/studies'>
+                      <BankOutlined style={{color:'white', fontSize:30}}/>               
+                  </Link>
+                </Menu.Item>
+                </Menu>
+                </div>
                 <Row gutter={2}>
                     <Col span={11} push={1} style={{borderStyle:"solid",borderColor:"rgba(12, 153, 196, 0.837)",borderWidth:'1px',padding:'10px 0px 70px 15px'}}>
                         <DicomViewer1 instance={instance1} {...viewerProps1} onSetInstance={this.setInstance1} maxValue={instanceLength1}

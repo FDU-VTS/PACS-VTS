@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 import DicomService from '../services/DicomService';
+import PluginsService from "../services/PluginsService";
 import DicomViewer from '../components/DicomViewer';
-import DicomViewer2 from '../components/DicomViewer2';
 import SeriesViewerTable from '../components/SeriesViewerTable';
 import SliderIn from '../components/SliderIn'
 import {Grid} from "semantic-ui-react";
 import { Row, Col } from 'antd';
 import 'antd/dist/antd.css';
+import * as axios from 'axios';
+import { ControlOutlined } from '@ant-design/icons';
 
 
 class SeriesViewerPage extends Component {
@@ -28,7 +30,8 @@ class SeriesViewerPage extends Component {
             animationId: undefined,
             ifzoom: null,
             flagzoom:false,
-            ifplay:false
+            ifplay:false,
+            installedPlugins:[],
         };
         this.setState = this.setState.bind(this);
     }
@@ -40,11 +43,66 @@ class SeriesViewerPage extends Component {
 
             DicomService.findInstancesBySeriesId(seriesId, instances => {
                 this.setState({instances: instances, isLoaded:true,});
-                console.log("instances",this.state.instances);
+                console.log("instances1",this.state.instances);
             })
             
         }
+        const show = [];
+        PluginsService.findPlugins(Plugins => {
+            // installedPlugins = installedPlugins.reduce((pluginsMap, plugin) => {
+            //     pluginsMap[plugin.name] = plugin;
+            //     return pluginsMap;
+            // }, {});
+            console.log("plugins",Plugins);
+            Plugins.map(plugin => {
+                show.push({
+                    plugin_id: plugin.id,
+                    plugin_name: plugin.name,
+                });
+            })           
+            this.setState({installedPlugins:show});
+            //console.log("plugins2",this.state.installedPlugins);
+        });
+
     }
+
+    onPlugin = (instanceid) => {
+            axios.post(
+                `/api/instances/${instanceid}/process/by_plugin/3/image`,{
+                    headers:{
+                        'Content-Type':'image/jpeg'
+                    }
+                }
+            ).then((response)=>{
+                console.log("newinstance",response);
+                const seriesId = this.state.seriesId;
+                DicomService.findInstancesBySeriesId(seriesId, instances => {
+                    this.setState({instances: instances, isLoaded:true,});
+                    console.log("instances2",this.state.instances);
+                })
+                const show = [];
+                PluginsService.findPlugins(Plugins => {
+                    // installedPlugins = installedPlugins.reduce((pluginsMap, plugin) => {
+                    //     pluginsMap[plugin.name] = plugin;
+                    //     return pluginsMap;
+                    // }, {});
+                    console.log("plugins",Plugins);
+                    Plugins.map(plugin => {
+                        show.push({
+                            plugin_id: plugin.id,
+                            plugin_name: plugin.name,
+                        });
+                    })           
+                    this.setState({installedPlugins:show});
+                    //console.log("plugins2",this.state.installedPlugins);
+                });
+            }).catch((err) => {
+                alert(err.response.data['message']);
+                this.setState({});
+            })
+        //}
+        
+    };
 
     setInstance = (indexInput) => {
         const currentInstanceId = this.state.index;
@@ -173,6 +231,9 @@ class SeriesViewerPage extends Component {
     rotateRight = () => {
         this.setState({rotation: 'right',flagzoom:false});
     };
+    setColorScale = (color) => {
+        this.setState({colorScale: color});
+    };
 
     render() {
         console.log(this.state.instances)
@@ -200,10 +261,12 @@ class SeriesViewerPage extends Component {
             <div style={{background:"black"}} tabIndex={'0'} >
                 {/* 把一个instance传过去 */}
                 {/* <SliderIn onSetInstance={this.setInstance} maxValue={instanceLength}/> */}
-                <SeriesViewerTable onPrevInstance={this.prevInstance} onNextInstance={this.nextInstance} 
+                <SeriesViewerTable data={this.state.installedPlugins} instance={instance} 
+                onPlugin={this.onPlugin}
+                onPrevInstance={this.prevInstance} onNextInstance={this.nextInstance} 
                 onPlay={this.play} onZoomin={this.zoomin} onZoomout={this.zoomout}
                 onRotateLeft={this.rotateLeft} onRotateRight={this.rotateRight} onMNextInstance={this.mnextInstance} onFNextInstance={this.fnextInstance} 
-                onPlay={this.play} onMPlay={this.mplay} onFPlay={this.fplay}/>
+                onPlay={this.play} onMPlay={this.mplay} onFPlay={this.fplay} onSetColorScale={this.setColorScale}/>
                 {/* <SliderIn onSetInstance={this.setInstance} maxValue={instanceLength}/> */}
                 {/* <DicomViewer instance={instance} {...viewerProps}/> */}
                 <Row>
