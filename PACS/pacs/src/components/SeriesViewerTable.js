@@ -45,6 +45,14 @@ class SeriesViewerTable extends React.Component {
         };
         this.onPlugin = this.props.onPlugin || function () {
         };
+        this.onClear = this.props.onClear || function () {
+        };
+        this.onDistance = this.props.onDistance || function () {
+        };
+        this.onAngle = this.props.onAngle || function () {
+        };
+        this.onArea = this.props.onArea || function () {
+        };
       }
       
       render() {
@@ -121,14 +129,14 @@ class SeriesViewerTable extends React.Component {
             </Menu.Item>
           </Menu>
         );
-        console.log("plugins3",this.props.data);
+        // console.log("plugins3",this.props.data);
         const ids = [];
         this.props.data.map(plugin=>{
           ids.push({
             singleid:plugin.plugin_id
           });
         })
-        console.log("id",ids[0],"+",ids[1]);
+        // console.log("id",ids[0],"+",ids[1]);
         const id1=ids[0]
           const menu3 = (
             <Menu>
@@ -145,20 +153,25 @@ class SeriesViewerTable extends React.Component {
             </Menu>
           );
           const menu4 = (
-            <Menu>
+            <Menu> 
               <Menu.Item>
-                <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
-                  1st menu item
+                <a target="_blank" rel="noopener noreferrer" onClick={this.onDistance}>
+                  测量距离
                 </a >
               </Menu.Item>
               <Menu.Item>
-                <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
-                  2nd menu item
+                <a target="_blank" rel="noopener noreferrer" onClick={this.onAngle}>
+                  测量角度
                 </a >
               </Menu.Item>
               <Menu.Item>
-                <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
-                  3rd menu item
+                <a target="_blank" rel="noopener noreferrer" onClick={this.onArea}>
+                  测量面积
+                </a >
+              </Menu.Item>
+              <Menu.Item>
+                <a target="_blank" rel="noopener noreferrer" onClick={this.onClear}>
+                  clear all
                 </a >
               </Menu.Item>
             </Menu>
@@ -222,7 +235,7 @@ class SeriesViewerTable extends React.Component {
                 <Menu.Item>
                   <Dropdown overlay={menu4}>
                       <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={searchstyle}>
-                      广告位招租4<DownOutlined style={searchbuttonstyle}/>
+                      测量工具<DownOutlined style={searchbuttonstyle}/>
                       </a >
                   </Dropdown>
                 </Menu.Item>

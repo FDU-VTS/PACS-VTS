@@ -16,7 +16,11 @@ require('three/examples/js/shaders/CopyShader.js');
 
 var uv = undefined;
 var uv2 = undefined;
+var uv3 = undefined;
+var uv4 = undefined;
 var first = true;
+var measure = 'clear';
+var modefirst = true;
 class DicomViewer extends Component {
     constructor(props) {
         super(props);
@@ -47,7 +51,15 @@ class DicomViewer extends Component {
         this.renderer.setSize(this.node.clientWidth, this.node.clientHeight);
     };
 
+    onResetSeedpoint = () => {
+        this.setState({seedPoint:new THREE.Vector2(-1,-1),})
+    };
+
     onMouseClick = (e) => {
+
+    }
+
+    onDistanceClick = (e) => {
         const scene = this.scene;
         const camera = this.camera;
         const rayCaster = this.rayCaster;
@@ -57,14 +69,14 @@ class DicomViewer extends Component {
         const vecPos = new THREE.Vector2(array[0] * 2 - 1, -(array[1] * 2) + 1);
         rayCaster.setFromCamera(vecPos, camera);
         const intersects = rayCaster.intersectObjects(scene.children); 
-        
+        // console.log("rtx", this.props.rtx)
         if (intersects && intersects.length > 0) {
             const intersectedImg = intersects[0];
-            if(uv===undefined){
+            if(uv===undefined && this.props.rtx==='on'){
                 uv = intersectedImg.uv;
                 this.setState({seedPoint: new THREE.Vector2(uv.x, uv.y)});
             }
-            else if(uv2===undefined){
+            else if(uv2===undefined && this.props.rtx==='on'){
                 uv2 = intersectedImg.uv;
                 this.setState({seedPoint: new THREE.Vector2(uv2.x, uv2.y)});
             }
@@ -72,6 +84,8 @@ class DicomViewer extends Component {
                 uv=undefined;
                 uv2=undefined;
                 // this.scene.children.remove()
+                // console.log("孩儿们",this.scene.children);
+                // console.log(this.scene.children.length)
                 this.scene.children.shift();
                 // console.log("孩儿们",this.scene.children);
             }
@@ -104,6 +118,227 @@ class DicomViewer extends Component {
         
     };
 
+    onAngleClick = (e) => {
+        const scene = this.scene;
+        const camera = this.camera;
+        const rayCaster = this.rayCaster;
+        const clientX = e.clientX;
+        const clientY = e.clientY;
+        const array = DicomViewer.getMousePosition(e.target, clientX, clientY);
+        const vecPos = new THREE.Vector2(array[0] * 2 - 1, -(array[1] * 2) + 1);
+        rayCaster.setFromCamera(vecPos, camera);
+        const intersects = rayCaster.intersectObjects(scene.children); 
+        // console.log("rtx", this.props.rtx)
+        if (intersects && intersects.length > 0) {
+            const intersectedImg = intersects[0];
+            if(uv===undefined && this.props.rtx==='on'){
+                uv = intersectedImg.uv;
+                this.setState({seedPoint: new THREE.Vector2(uv.x, uv.y)});
+            }
+            else if(uv2===undefined && this.props.rtx==='on'){
+                uv2 = intersectedImg.uv;
+                this.setState({seedPoint: new THREE.Vector2(uv2.x, uv2.y)});
+            }
+            else if(uv3===undefined&&this.props.rtx==='on'){
+                uv3 = intersectedImg.uv;
+                this.setState({seedPoint: new THREE.Vector2(uv3.x, uv3.y)})
+            }
+            else {
+                uv=undefined;
+                uv2=undefined;
+                uv3=undefined;
+                // this.scene.children.remove()
+                // console.log("孩儿们",this.scene.children);
+                // console.log(this.scene.children.length)
+                while(this.scene.children.length > 1){
+                    this.scene.children.shift();
+                }
+                // console.log("孩儿们",this.scene.children);
+            }
+            
+            
+            if (uv && uv2) {
+                
+                // var a = uv.x - uv2.x;
+                // var b = uv.y - uv2.y;
+                // var dist = Math.sqrt(a*a+b*b)
+                var geometryline = new THREE.Geometry();
+                geometryline.vertices.push(
+                    new THREE.Vector3(uv.x*3-1.5, uv.y*3-1.5, 0),
+                    new THREE.Vector3(uv2.x*3-1.5, uv2.y*3-1.5, 0)
+                );
+                geometryline.colors.push(
+                    new THREE.Color( 0xFF0000 ), 
+                    new THREE.Color( 0xFF0000 )
+                )
+                var materialline = new THREE.LineBasicMaterial({ vertexColors: true });
+                this.line = new THREE.Line(geometryline, materialline);
+                this.scene.add(this.line)
+                // console.log('坐标',intersectedImg.point,uv);
+                // alert(`${uv.x} ${uv.y}`);
+                // setTimeout(()=>{alert(`测量距离为${dist}`)},100);  
+                
+            }
+
+            if (uv2 && uv3) {
+                
+                // var a = uv3.x - uv2.x;
+                // var b = uv3.y - uv2.y;
+                // var dist = Math.sqrt(a*a+b*b)
+                var geometryline = new THREE.Geometry();
+                geometryline.vertices.push(
+                    new THREE.Vector3(uv3.x*3-1.5, uv3.y*3-1.5, 0),
+                    new THREE.Vector3(uv2.x*3-1.5, uv2.y*3-1.5, 0)
+                );
+                geometryline.colors.push(
+                    new THREE.Color( 0xFF0000 ), 
+                    new THREE.Color( 0xFF0000 )
+                )
+                var materialline = new THREE.LineBasicMaterial({ vertexColors: true });
+                this.line = new THREE.Line(geometryline, materialline);
+                this.scene.add(this.line)
+                // console.log('坐标',intersectedImg.point,uv);
+                // alert(`${uv.x} ${uv.y}`);
+                // setTimeout(()=>{alert(`测量距离为${dist}`)},100);  
+                var a1 = uv.x - uv2.x;
+                var b1 = uv.y - uv2.y;
+                var a2 = uv3.x - uv2.x;
+                var b2 = uv3.y - uv2.y;
+                var a3 = a1*a2;
+                var b3 = b1*b2;
+                var dist1 = Math.sqrt(a1*a1 + b1*b1)
+                var dist2 = Math.sqrt(a2*a2 + b2*b2)
+                var cos = (a3 + b3) / dist1 / dist2;
+                var angle = Math.acos(cos)/Math.PI * 180 % 180;
+                setTimeout(()=>{alert(`测量角度为 ${angle}°`)},100);
+                
+            }
+        }
+        
+    };
+
+    onAreaClick = (e) => {
+        const scene = this.scene;
+        const camera = this.camera;
+        const rayCaster = this.rayCaster;
+        const clientX = e.clientX;
+        const clientY = e.clientY;
+        const array = DicomViewer.getMousePosition(e.target, clientX, clientY);
+        const vecPos = new THREE.Vector2(array[0] * 2 - 1, -(array[1] * 2) + 1);
+        rayCaster.setFromCamera(vecPos, camera);
+        const intersects = rayCaster.intersectObjects(scene.children); 
+        // console.log("rtx", this.props.rtx)
+        if (intersects && intersects.length > 0) {
+            const intersectedImg = intersects[0];
+            if(uv===undefined && this.props.rtx==='on'){
+                uv = intersectedImg.uv;
+                this.setState({seedPoint: new THREE.Vector2(uv.x, uv.y)});
+            }
+            else if(uv2===undefined && this.props.rtx==='on'){
+                uv2 = intersectedImg.uv;
+                this.setState({seedPoint: new THREE.Vector2(uv2.x, uv2.y)});
+            }
+            else if(uv3===undefined&&this.props.rtx==='on'){
+                uv3 = intersectedImg.uv;
+                this.setState({seedPoint: new THREE.Vector2(uv3.x, uv3.y)})
+            }
+            else if(uv4===undefined&&this.props.rtx==='on'){
+                uv4 = intersectedImg.uv;
+                this.setState({seedPoint: new THREE.Vector2(uv4.x, uv4.y)})
+            }
+            else {
+                uv=undefined;
+                uv2=undefined;
+                uv3=undefined;
+                uv4=undefined;
+                // this.scene.children.remove()
+                // console.log("孩儿们",this.scene.children);
+                // console.log(this.scene.children.length)
+                while(this.scene.children.length > 1){
+                    this.scene.children.shift();
+                }
+                // console.log("孩儿们",this.scene.children);
+            }
+            
+            
+            if (uv && uv2) {
+                
+                // var a = uv.x - uv2.x;
+                // var b = uv.y - uv2.y;
+                // var dist = Math.sqrt(a*a+b*b)
+                var geometryline = new THREE.Geometry();
+                geometryline.vertices.push(
+                    new THREE.Vector3(uv.x*3-1.5, uv.y*3-1.5, 0),
+                    new THREE.Vector3(uv2.x*3-1.5, uv2.y*3-1.5, 0)
+                );
+                geometryline.colors.push(
+                    new THREE.Color( 0xFF0000 ), 
+                    new THREE.Color( 0xFF0000 )
+                )
+                var materialline = new THREE.LineBasicMaterial({ vertexColors: true });
+                this.line = new THREE.Line(geometryline, materialline);
+                this.scene.add(this.line)
+                // console.log('坐标',intersectedImg.point,uv);
+                // alert(`${uv.x} ${uv.y}`);
+                // setTimeout(()=>{alert(`测量距离为${dist}`)},100);  
+                
+            }
+
+            if (uv2 && uv3) {
+                
+                var geometryline = new THREE.Geometry();
+                geometryline.vertices.push(
+                    new THREE.Vector3(uv3.x*3-1.5, uv3.y*3-1.5, 0),
+                    new THREE.Vector3(uv2.x*3-1.5, uv2.y*3-1.5, 0)
+                );
+                geometryline.colors.push(
+                    new THREE.Color( 0xFF0000 ), 
+                    new THREE.Color( 0xFF0000 )
+                )
+                var materialline = new THREE.LineBasicMaterial({ vertexColors: true });
+                this.line = new THREE.Line(geometryline, materialline);
+                this.scene.add(this.line)  
+                
+            }
+            if (uv3 && uv4) {
+                
+                var geometryline = new THREE.Geometry();
+                geometryline.vertices.push(
+                    new THREE.Vector3(uv3.x*3-1.5, uv3.y*3-1.5, 0),
+                    new THREE.Vector3(uv4.x*3-1.5, uv4.y*3-1.5, 0)
+                );
+                geometryline.colors.push(
+                    new THREE.Color( 0xFF0000 ), 
+                    new THREE.Color( 0xFF0000 )
+                )
+                var materialline = new THREE.LineBasicMaterial({ vertexColors: true });
+                this.line = new THREE.Line(geometryline, materialline);
+                this.scene.add(this.line)  
+
+                var geometryline = new THREE.Geometry();
+                geometryline.vertices.push(
+                    new THREE.Vector3(uv4.x*3-1.5, uv4.y*3-1.5, 0),
+                    new THREE.Vector3(uv.x*3-1.5, uv.y*3-1.5, 0)
+                );
+                geometryline.colors.push(
+                    new THREE.Color( 0xFF0000 ), 
+                    new THREE.Color( 0xFF0000 )
+                )
+                var materialline = new THREE.LineBasicMaterial({ vertexColors: true });
+                this.line = new THREE.Line(geometryline, materialline);
+                this.scene.add(this.line);
+                // 下面计算面积
+                var area = 0.5 * Math.abs(uv.x*uv2.y-uv2.x*uv.y +
+                    uv2.x*uv3.y-uv3.x*uv2.y +
+                    uv3.x*uv4.y-uv4.x*uv3.y +
+                    uv4.x*uv.y-uv.x*uv4.y );
+                setTimeout(()=>{alert(`测量面积为${area}`)},100);
+            }
+
+        }
+        
+    };
+
     static getMousePosition(dom, x, y) {
         const boundingBox = dom.getBoundingClientRect();
         return [
@@ -117,12 +352,12 @@ class DicomViewer extends Component {
         this.camera = new THREE.PerspectiveCamera(65, this.node.clientWidth / this.node.clientHeight, 0.1, 100);
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(this.node.clientWidth, this.node.clientHeight);
-        this.node.onclick = this.onMouseClick;
+        
         this.composer=new THREE.EffectComposer(this.renderer);
         
     }
     componentWillMount() {
-        console.log("willmount", this.props.instance)
+        // console.log("willmount", this.props.instance)
         //alert("componentWillMount");
     }
 
@@ -142,6 +377,9 @@ class DicomViewer extends Component {
     }
 
     componentDidUpdate() {
+        
+
+        
         //alert("componentDidUpdate")
         const alt = `didupdate ${this.props.rotation}`
         // alert(alt);
@@ -155,7 +393,70 @@ class DicomViewer extends Component {
         this.node.appendChild(this.renderer.domElement);
         // this.node.addEventListener('click', alert("fuck"));
         this.node.addEventListener('resize', this.onWindowResize, false);
-        const seedPoint = this.state.seedPoint;
+        var seedPoint = this.state.seedPoint;
+        var prevMeasure = measure;
+        measure = this.props.measure;
+        if(prevMeasure != measure){
+            modefirst = true;
+        }else{
+            modefirst = false;
+        }
+        // console.log(measure);
+        if(measure === 'clear') {
+            while(this.scene.children.length > 1){
+                this.scene.children.shift();
+            }
+            seedPoint = new THREE.Vector2(-1,-1);
+            // console.log("seedpoint重置！！")
+            
+        }
+
+        if(measure === 'distance') {
+            if(modefirst){
+                console.log("执行first清除")
+                uv = undefined;
+                uv2 = undefined;
+                while(this.scene.children.length > 1){
+                    this.scene.children.shift();
+                }
+                seedPoint = new THREE.Vector2(-1,-1);
+                this.node.onclick = this.onDistanceClick;
+            }
+            
+        }
+
+        if(measure === 'angle') {
+            if(modefirst){
+                // console.log("执行first清除")
+                uv = undefined;
+                uv2 = undefined;
+                uv3 = undefined;
+                while(this.scene.children.length > 1){
+                    this.scene.children.shift();
+                }
+                seedPoint = new THREE.Vector2(-1,-1);
+                this.node.onclick = this.onAngleClick;
+            }
+            
+        }
+
+        if(measure === 'area') {
+            if(modefirst){
+                // console.log("执行first清除")
+                uv = undefined;
+                uv2 = undefined;
+                uv3 = undefined;
+                uv4 = undefined;
+                while(this.scene.children.length > 1){
+                    this.scene.children.shift();
+                }
+                seedPoint = new THREE.Vector2(-1,-1);
+                this.node.onclick = this.onAreaClick;
+            }
+            
+        }
+
+
         const vertShader = document.getElementById('mainVert').textContent;
         const fragShader = document.getElementById(this.props.colorScale + 'Frag').textContent;
         new THREE.TextureLoader().load(url, (texture) => {
@@ -185,8 +486,8 @@ class DicomViewer extends Component {
             if(first === true){
                 // alert("第一次渲染")
                 this.rect = new THREE.Mesh(geometry, material);
-                console.log("第一次height");
-                console.log(this.rect.geometry.parameters.height);
+                // console.log("第一次height");
+                // console.log(this.rect.geometry.parameters.height);
                 if (this.props.rotation === 'left' && !this.props.flagzoom){
                     this.rect.rotation.z -= 0.5;
                 }                
@@ -251,7 +552,7 @@ class DicomViewer extends Component {
             this.rect.needsUpdate = true;
             this.camera.matrixWorldNeedsUpdate = true;
             this.camera.updateProjectionMatrix();
-            console.log("当前拖动序号", instance.id)
+            // console.log("当前拖动序号", instance.id)
 
             this.renderPass=new THREE.RenderPass(this.scene,this.camera);
             this.composer.addPass(this.renderPass)
@@ -296,7 +597,7 @@ class DicomViewer extends Component {
         //alert("父组件render了")
         let maxValue = this.props.maxValue;
         let instance = this.props.instance;
-        console.log('viewer组件获取的instance',instance)
+        // console.log('viewer组件获取的instance',instance)
         return (
             <div ref={node => this.node = node} style={{height: window.innerHeight}}>
                 <div>

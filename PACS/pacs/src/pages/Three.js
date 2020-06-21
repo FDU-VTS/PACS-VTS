@@ -31,7 +31,7 @@ class Three extends React.Component {
     const { inputValue } = this.state;
 
     const maxValue = this.props.maxValue;
-    console.log("序列长度", maxValue)
+    // console.log("序列长度", maxValue)
     return (
       <Row>
         <Col span={20}>

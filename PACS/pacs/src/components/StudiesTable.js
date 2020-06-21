@@ -85,7 +85,7 @@ class StudiesTable extends React.Component {
   };
 
   render() {
-    console.log(this.props.data)
+    // console.log(this.props.data)
     const columns = [
       {
         title: 'Study ID',

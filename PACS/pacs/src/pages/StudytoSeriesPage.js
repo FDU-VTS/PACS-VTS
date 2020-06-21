@@ -17,12 +17,12 @@ class StudytoSeriesPage extends Component {
     }
 
     componentWillMount() {           
-        console.log("开始获取series")
-        console.log("id如下");
-        console.log(this.state.studyId);
+        // console.log("开始获取series")
+        // console.log("id如下");
+        // console.log(this.state.studyId);
         StudiesService.findStudyById(this.state.studyId, study => {
-            console.log("找到series了 如下")
-            console.log(study);          
+            // console.log("找到series了 如下")
+            // console.log(study);          
             const show = ({
                     patient_name: study.patient["patient_name"],
                     patient_id: study.patient["patient_id"],
@@ -33,7 +33,7 @@ class StudytoSeriesPage extends Component {
                     study_referring_physician: study.study_referring_physician,
                     series: study.series,
                 });
-            console.log(show)   
+            // console.log(show)   
             this.setState({
                 series: study,
                 showList: show})

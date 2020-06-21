@@ -125,23 +125,23 @@ class SeriesViewerminiPage extends Component {
         const index3 = this.state.index3;
         const seriesId4 = this.state.seriesId4;
         const index4 = this.state.index4;
-        console.log("seriesId",seriesId1,seriesId2,seriesId3,seriesId4)
+        // console.log("seriesId",seriesId1,seriesId2,seriesId3,seriesId4)
         if(!this.state.isLoaded) {
             DicomService.findInstancesBySeriesId(seriesId, instances => {
                 this.setState({instances: instances, isLoaded:true,});
-                console.log("instances",this.state.instances);
+                // console.log("instances",this.state.instances);
             })
         }
 
         if(!this.state.isLoaded1) {
             if(seriesId1===0){
                 this.setState({instances1: instances0, isLoaded1:true,});
-                console.log("instances1",this.state.instances1);
+                // console.log("instances1",this.state.instances1);
             }
             else{
                 DicomService.findInstancesBySeriesId(seriesId1, instances1 => {
                     this.setState({instances1: instances1, isLoaded1:true,});
-                    console.log("instances1",this.state.instances1);
+                    // console.log("instances1",this.state.instances1);
                 })
             }
             
@@ -150,12 +150,12 @@ class SeriesViewerminiPage extends Component {
         if(!this.state.isLoaded2) {
             if(seriesId2===0){
                 this.setState({instances2: instances0, isLoaded2:true,});
-                console.log("instances2",this.state.instances2);
+                // console.log("instances2",this.state.instances2);
             }
             else{
                 DicomService.findInstancesBySeriesId(seriesId2, instances2 => {
                     this.setState({instances2: instances2, isLoaded2:true,});
-                    console.log("instances2",this.state.instances2);
+                    // console.log("instances2",this.state.instances2);
                 })
             }
             
@@ -164,12 +164,12 @@ class SeriesViewerminiPage extends Component {
         if(!this.state.isLoaded3) {
             if(seriesId3===0){
                 this.setState({instances3: instances0, isLoaded3:true,});
-                console.log("instances3",this.state.instances3);
+                // console.log("instances3",this.state.instances3);
             }
             else{
                 DicomService.findInstancesBySeriesId(seriesId3, instances3 => {
                     this.setState({instances3: instances3, isLoaded3:true,});
-                    console.log("instances3",this.state.instances3);
+                    // console.log("instances3",this.state.instances3);
                 })
             }
             
@@ -178,12 +178,12 @@ class SeriesViewerminiPage extends Component {
         if(!this.state.isLoaded4) {
             if(seriesId4===0){
                 this.setState({instances4: instances0, isLoaded4:true,});
-                console.log("instances4",this.state.instances4);
+                // console.log("instances4",this.state.instances4);
             }
             else{
                 DicomService.findInstancesBySeriesId(seriesId4, instances4 => {
                     this.setState({instances4: instances4, isLoaded4:true,});
-                    console.log("instances4",this.state.instances4);
+                    // console.log("instances4",this.state.instances4);
                 })
             }
             
@@ -668,7 +668,7 @@ class SeriesViewerminiPage extends Component {
     };
 
     render() {
-        console.log(this.state.instances)
+        // console.log(this.state.instances)
         const index = this.state.index;
         const index1 = this.state.index1;
         const index2 = this.state.index2;
@@ -684,10 +684,10 @@ class SeriesViewerminiPage extends Component {
         const instance2 = instances2[index2]
         const instance3 = instances3[index3]
         const instance4 = instances4[index4]
-        console.log('获取到的instance1', instance1)
-        console.log('获取到的instance2', instance2)
-        console.log('获取到的instance3', instance3)
-        console.log('获取到的instance4', instance4)
+        // console.log('获取到的instance1', instance1)
+        // console.log('获取到的instance2', instance2)
+        // console.log('获取到的instance3', instance3)
+        // console.log('获取到的instance4', instance4)
         // const seriesId = instance.id;
 
         const viewerProps = {

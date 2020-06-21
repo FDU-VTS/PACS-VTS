@@ -20,8 +20,8 @@ class PatienttoStudyPage extends Component {
     componentWillMount() {
         StudiesService.findStudies(studyList => {
             const show=[];
-            console.log("获取到studies了")
-            console.log(studyList);
+            // console.log("获取到studies了")
+            // console.log(studyList);
             studyList.map(study => {
                 if(study.patient["patient_id"]==this.state.patientId){
                     show.push({

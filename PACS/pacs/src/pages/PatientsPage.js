@@ -18,12 +18,12 @@ class PatientsPage extends Component {
     
     componentWillMount() {
         
-        console.log("开始获取Patients")
+        // console.log("开始获取Patients")
         
             StudiesService.findPatients(studyList => {
                 const show=[];
-                console.log("找到Patients了 如下")
-                console.log(studyList);
+                // console.log("找到Patients了 如下")
+                // console.log(studyList);
                 studyList.map(study => {
                     //for(var i=0;i<100000;i++){
                         show.push({

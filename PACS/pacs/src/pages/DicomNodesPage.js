@@ -23,12 +23,12 @@ class DicomNodesPage extends Component {
     }
     componentWillMount() {
         
-        console.log("开始获取Patients")
+        // console.log("开始获取Patients")
         
             StudiesService.findPatients(patientList => {
                 const show=[];
-                console.log("找到Patients了 如下")
-                console.log(patientList);
+                // console.log("找到Patients了 如下")
+                // console.log(patientList);
                 patientList.map(study => {
                     //for(var i=0;i<100000;i++){
                         show.push({
@@ -49,8 +49,8 @@ class DicomNodesPage extends Component {
 
             StudiesService.findStudies(studyList => {
                 const show=[];
-                console.log("获取到studies了")
-                console.log(studyList);
+                // console.log("获取到studies了")
+                // console.log(studyList);
                 studyList.map(study => {
                     show.push({
                         patient_id: study.patient["patient_id"],
@@ -68,8 +68,8 @@ class DicomNodesPage extends Component {
 
             StudiesService.findSeries(serieList => {
                 const show=[];
-                console.log("获取到series了")
-                console.log(serieList);
+                // console.log("获取到series了")
+                // console.log(serieList);
                 serieList.map(series => {
                     show.push({
                         id:series.id,
@@ -95,7 +95,7 @@ class DicomNodesPage extends Component {
             newDicomNode: params
         })
         const newDicomNode = this.state.newDicomNode;
-        console.log("上传了");
+        // console.log("上传了");
         axios.post('/api/dcm/upload', JSON.stringify(newDicomNode),
             {
                 responseType: 'blob',

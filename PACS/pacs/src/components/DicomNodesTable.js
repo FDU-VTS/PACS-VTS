@@ -253,9 +253,9 @@ class DicomNodesTable extends React.Component {
     ];
     const { Header, Content, Footer, Sider } = Layout;
     const { TabPane } = Tabs;
-    console.log("patientdata");
-    console.log(this.props.patientdata)
-    console.log(Menu.Item.selectedKeys);
+    // console.log("patientdata");
+    // console.log(this.props.patientdata)
+    // console.log(Menu.Item.selectedKeys);
     return (
         <div>
            <Layout>

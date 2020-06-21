@@ -29,7 +29,7 @@ class StudytoSeriesTable extends Component {;
             CompareList: cl,
           })
           index = index + 1;
-          console.log("加入对比",id, cl)
+          // console.log("加入对比",id, cl)
         }
         else {
           alert("只能添加四个")
@@ -102,8 +102,8 @@ class StudytoSeriesTable extends Component {;
     render() {
         const { Header, Content, Footer } = Layout;
         let study = this.props.data;
-        console.log("获取到的类型", typeof(study))
-        console.log(this.props.data.series)
+        // console.log("获取到的类型", typeof(study))
+        // console.log(this.props.data.series)
     const columns = [
       {
         title: 'Series ID',
@@ -152,7 +152,7 @@ class StudytoSeriesTable extends Component {;
     ];
 
     const list = this.state.CompareList;
-    console.log("跳转名单",list)
+    // console.log("跳转名单",list)
         return (
             <div>
                 {/* <p>{study.patient_name}</p>              */}

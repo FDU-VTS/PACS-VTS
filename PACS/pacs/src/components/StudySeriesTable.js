@@ -13,7 +13,7 @@ class StudySeriesTable extends Component {;
     render() {
         const { Header, Content, Footer } = Layout;
         let study = this.props.data;
-        console.log("获取到的类型", typeof(study))
+        // console.log("获取到的类型", typeof(study))
         return (
             <div>
                 {/* <p>{study.patient_name}</p>              */}

@@ -238,7 +238,7 @@ class DicomViewer2 extends Component {
             this.rect.needsUpdate = true;
             this.camera.matrixWorldNeedsUpdate = true;
             this.camera.updateProjectionMatrix();
-            console.log("当前拖动序号", instance.id)
+            // console.log("当前拖动序号", instance.id)
             this.renderPass=new THREE.RenderPass(this.scene,this.camera);
             this.composer.addPass(this.renderPass)
             var effectCopy = new THREE.ShaderPass(THREE.CopyShader);
@@ -282,8 +282,8 @@ class DicomViewer2 extends Component {
         //alert("父组件render了")
         let instance = this.props.instance;
         let maxValue = this.props.maxValue;
-        console.log('viewer组件获取的instance',instance)
-        console.log("获取的最大值",maxValue)
+        // console.log('viewer组件获取的instance',instance)
+        // console.log("获取的最大值",maxValue)
         return (
             <div ref={node => this.node = node} style={{height: window.innerHeight/2}}>
                 <div>

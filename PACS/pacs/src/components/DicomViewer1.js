@@ -82,7 +82,7 @@ class DicomViewer1 extends Component {
             const intersectedImg = intersects[0];
             const uv = intersectedImg.uv;
             if (uv) {
-                console.log(uv);
+                // console.log(uv);
                 this.setState({seedPoint: new THREE.Vector2(uv.x, uv.y)});
             }
         }
@@ -106,7 +106,7 @@ class DicomViewer1 extends Component {
         
     }
     componentWillMount() {
-        console.log("willmount", this.props.instance)
+        // console.log("willmount", this.props.instance)
         //alert("componentWillMount");
     }
 
@@ -126,7 +126,7 @@ class DicomViewer1 extends Component {
     }
 
     componentDidUpdate() {
-        console.log("window1属性", this.props.window)
+        // console.log("window1属性", this.props.window)
         //alert("componentDidUpdate")
         const alt = `didupdate ${this.props.rotation}`
         // alert(alt);
@@ -171,8 +171,8 @@ class DicomViewer1 extends Component {
             if(first === true){
                 // alert("第一次渲染")
                 this.rect = new THREE.Mesh(geometry, material);
-                console.log("第一次height");
-                console.log(this.rect.geometry.parameters.height);
+                // console.log("第一次height");
+                // console.log(this.rect.geometry.parameters.height);
                 if (this.props.rotation === 'left' && !this.props.flagzoom && this.props.window){
                     this.rect.rotation.z -= 0.5;
                 }                
@@ -238,7 +238,7 @@ class DicomViewer1 extends Component {
             this.rect.needsUpdate = true;
             this.camera.matrixWorldNeedsUpdate = true;
             this.camera.updateProjectionMatrix();
-            console.log("当前拖动序号", instance.id)
+            // console.log("当前拖动序号", instance.id)
             this.renderPass=new THREE.RenderPass(this.scene,this.camera);
             this.composer.addPass(this.renderPass)
             var effectCopy = new THREE.ShaderPass(THREE.CopyShader);
@@ -282,8 +282,8 @@ class DicomViewer1 extends Component {
         //alert("父组件render了")
         let instance = this.props.instance;
         let maxValue = this.props.maxValue;
-        console.log('viewer组件获取的instance',instance)
-        console.log("获取的最大值",maxValue)
+        // console.log('viewer组件获取的instance',instance)
+        // console.log("获取的最大值",maxValue)
         return (
             <div ref={node => this.node = node} style={{height: window.innerHeight/2}}>
                 <div>

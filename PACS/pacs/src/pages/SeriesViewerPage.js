@@ -9,7 +9,7 @@ import { Row, Col } from 'antd';
 import 'antd/dist/antd.css';
 import * as axios from 'axios';
 import { ControlOutlined } from '@ant-design/icons';
-
+// const THREE = window.THREE = require('three');
 
 class SeriesViewerPage extends Component {
     constructor(props) {
@@ -32,6 +32,8 @@ class SeriesViewerPage extends Component {
             flagzoom:false,
             ifplay:false,
             installedPlugins:[],
+            rtx:'off',
+            measure:'clear',
         };
         this.setState = this.setState.bind(this);
     }
@@ -43,7 +45,7 @@ class SeriesViewerPage extends Component {
 
             DicomService.findInstancesBySeriesId(seriesId, instances => {
                 this.setState({instances: instances, isLoaded:true,});
-                console.log("instances1",this.state.instances);
+                // console.log("instances1",this.state.instances);
             })
             
         }
@@ -53,7 +55,7 @@ class SeriesViewerPage extends Component {
             //     pluginsMap[plugin.name] = plugin;
             //     return pluginsMap;
             // }, {});
-            console.log("plugins",Plugins);
+            // console.log("plugins",Plugins);
             Plugins.map(plugin => {
                 show.push({
                     plugin_id: plugin.id,
@@ -66,6 +68,26 @@ class SeriesViewerPage extends Component {
 
     }
 
+    onClear = () => {
+        this.setState({rtx:'off',
+                    measure:'clear'})
+    }
+
+    onDistance = () => {
+        this.setState({rtx:'on',
+                    measure:'distance'})
+    }
+
+    onAngle = () => {
+        this.setState({rtx:'on',
+                    measure:'angle'})
+    }
+
+    onArea = () => {
+        this.setState({rtx:'on',
+                    measure:'area'})
+    }
+
     onPlugin = (instanceid) => {
             axios.post(
                 `/api/instances/${instanceid}/process/by_plugin/3/image`,{
@@ -74,11 +96,11 @@ class SeriesViewerPage extends Component {
                     }
                 }
             ).then((response)=>{
-                console.log("newinstance",response);
+                // console.log("newinstance",response);
                 const seriesId = this.state.seriesId;
                 DicomService.findInstancesBySeriesId(seriesId, instances => {
                     this.setState({instances: instances, isLoaded:true,});
-                    console.log("instances2",this.state.instances);
+                    // console.log("instances2",this.state.instances);
                 })
                 const show = [];
                 PluginsService.findPlugins(Plugins => {
@@ -86,7 +108,7 @@ class SeriesViewerPage extends Component {
                     //     pluginsMap[plugin.name] = plugin;
                     //     return pluginsMap;
                     // }, {});
-                    console.log("plugins",Plugins);
+                    // console.log("plugins",Plugins);
                     Plugins.map(plugin => {
                         show.push({
                             plugin_id: plugin.id,
@@ -236,14 +258,14 @@ class SeriesViewerPage extends Component {
     };
 
     render() {
-        console.log(this.state.instances)
+        // console.log(this.state.instances)
         const index = this.state.index;
         const instances = this.state.instances;
         const instance = instances[index]
         const instance2 = instances[index+1]
         // const seriesId = instance.id;
         if(instances && instances.length > 0){
-            console.log("测试",instances,instance,instance.id);
+            // console.log("测试",instances,instance,instance.id);
         }
         const viewerProps = {
             style: {
@@ -253,7 +275,9 @@ class SeriesViewerPage extends Component {
             rotation:this.state.rotation,
             ifzoom:this.state.ifzoom,
             flagzoom:this.state.flagzoom,
-            ifplay:this.state.ifplay
+            ifplay:this.state.ifplay,
+            rtx:this.state.rtx,
+            measure:this.state.measure,
         };
         const instanceLength = (this.state.instances || []).length;
         
@@ -262,6 +286,10 @@ class SeriesViewerPage extends Component {
                 {/* 把一个instance传过去 */}
                 {/* <SliderIn onSetInstance={this.setInstance} maxValue={instanceLength}/> */}
                 <SeriesViewerTable data={this.state.installedPlugins} instance={instance} 
+                onClear = {this.onClear}
+                onDistance = {this.onDistance}
+                onAngle = {this.onAngle}
+                onArea = {this.onArea}
                 onPlugin={this.onPlugin}
                 onPrevInstance={this.prevInstance} onNextInstance={this.nextInstance} 
                 onPlay={this.play} onZoomin={this.zoomin} onZoomout={this.zoomout}

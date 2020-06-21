@@ -19,13 +19,13 @@ class StudySeriesPage extends Component {
     
         componentWillMount() {
             
-            console.log("开始获取series")
-            console.log("id如下");
-            console.log(this.state.studyId);
+            // console.log("开始获取series")
+            // console.log("id如下");
+            // console.log(this.state.studyId);
             StudiesService.findStudyById(this.state.studyId, study => {
-                console.log("找到series了 如下")
+                // console.log("找到series了 如下")
 
-                console.log(study);
+                // console.log(study);
                     const show = ({
                         patient_name: study.patient["patient_name"],
                         patient_id: study.patient["patient_id"],
@@ -41,7 +41,7 @@ class StudySeriesPage extends Component {
                         series_number: study.series["0"]["series_number"],
                         series_images_count: study.series["0"]["images_count"],
                     })
-                console.log(show)   
+                // console.log(show)   
                 this.setState({
                     studies: study,
                     showList: show})
@@ -53,7 +53,7 @@ class StudySeriesPage extends Component {
     
         render() {
             const studies = this.state.studies;
-            console.log("showlist",this.state.showList)
+            // console.log("showlist",this.state.showList)
             return (
                 <div>
                     <StudySeriesTable data={this.state.showList}/>
