@@ -140,8 +140,13 @@ class SeriesViewerminiPage extends Component {
             }
             else{
                 DicomService.findInstancesBySeriesId(seriesId1, instances1 => {
-                    this.setState({instances1: instances1, isLoaded1:true,});
+                    // this.setState({instances1: instances1, isLoaded1:true,});
                     // console.log("instances1",this.state.instances1);
+                    const len=instances1.length;
+                 instances1.map(instance =>{
+                     instance['instance_number']=(len-instance['instance_number'])+1
+                 })
+                this.setState({instances1: instances1.reverse(), isLoaded1:true,});
                 })
             }
             
@@ -154,7 +159,11 @@ class SeriesViewerminiPage extends Component {
             }
             else{
                 DicomService.findInstancesBySeriesId(seriesId2, instances2 => {
-                    this.setState({instances2: instances2, isLoaded2:true,});
+                    const len=instances2.length;
+                 instances2.map(instance =>{
+                     instance['instance_number']=(len-instance['instance_number'])+1
+                 })
+                this.setState({instances2: instances2.reverse(), isLoaded2:true,});
                     // console.log("instances2",this.state.instances2);
                 })
             }
@@ -168,8 +177,11 @@ class SeriesViewerminiPage extends Component {
             }
             else{
                 DicomService.findInstancesBySeriesId(seriesId3, instances3 => {
-                    this.setState({instances3: instances3, isLoaded3:true,});
-                    // console.log("instances3",this.state.instances3);
+                    const len=instances3.length;
+                 instances3.map(instance =>{
+                     instance['instance_number']=(len-instance['instance_number'])+1
+                 })
+                this.setState({instances3: instances3.reverse(), isLoaded3:true,});
                 })
             }
             
@@ -182,8 +194,11 @@ class SeriesViewerminiPage extends Component {
             }
             else{
                 DicomService.findInstancesBySeriesId(seriesId4, instances4 => {
-                    this.setState({instances4: instances4, isLoaded4:true,});
-                    // console.log("instances4",this.state.instances4);
+                    const len=instances4.length;
+                 instances4.map(instance =>{
+                     instance['instance_number']=(len-instance['instance_number'])+1
+                 })
+                this.setState({instances4: instances4.reverse(), isLoaded4:true,});
                 })
             }
             
@@ -600,7 +615,17 @@ class SeriesViewerminiPage extends Component {
     rotateLeft = () => {
         this.setState({rotation: 'left',flagzoom:false,});
     };
-
+    turnoff = () => {
+        this.setState({flagzoom1:false,
+            flagzoom2:false,
+            flagzoom3:false,
+            flagzoom4:false,
+        rotation1:null,
+        rotation2:null,
+        rotation3:null,
+        rotation4:null})
+    }
+    
     rotateLeft1 = () => {
         this.setState({rotation1: 'left',flagzoom1:false,
         window1:true,
@@ -767,14 +792,14 @@ class SeriesViewerminiPage extends Component {
                         <DicomViewer1 instance={instance1} {...viewerProps1} onSetInstance={this.setInstance1} maxValue={instanceLength1}
                         onPrevInstance={this.prevInstance1} onNextInstance={this.nextInstance1} 
                         onPlay={this.play1} onZoomin={this.zoomin1} onZoomout={this.zoomout1}
-                        onRotateLeft={this.rotateLeft1} onRotateRight={this.rotateRight1}/>
+                        onRotateLeft={this.rotateLeft1} onRotateRight={this.rotateRight1} turnoff={this.turnoff}/>
                         
                     </Col>
                     <Col span={11} push={1} style={{borderStyle:"solid",borderColor:"rgba(12, 153, 196, 0.837)",borderWidth:'1px',padding:'10px 0px 70px 15px'}}>
                         <DicomViewer2 instance={instance2} {...viewerProps2} onSetInstance={this.setInstance2} maxValue={instanceLength2}
                         onPrevInstance={this.prevInstance2} onNextInstance={this.nextInstance2} 
                         onPlay={this.play2} onZoomin={this.zoomin2} onZoomout={this.zoomout2}
-                        onRotateLeft={this.rotateLeft2} onRotateRight={this.rotateRight2}/>
+                        onRotateLeft={this.rotateLeft2} onRotateRight={this.rotateRight2} turnoff={this.turnoff}/>
                     </Col>
                 </Row>
 
@@ -783,13 +808,13 @@ class SeriesViewerminiPage extends Component {
                         <DicomViewer3 instance={instance3} {...viewerProps3} onSetInstance={this.setInstance3} maxValue={instanceLength3}
                         onPrevInstance={this.prevInstance3} onNextInstance={this.nextInstance3} 
                         onPlay={this.play3} onZoomin={this.zoomin3} onZoomout={this.zoomout3}
-                        onRotateLeft={this.rotateLeft3} onRotateRight={this.rotateRight3}/>
+                        onRotateLeft={this.rotateLeft3} onRotateRight={this.rotateRight3} turnoff={this.turnoff}/>
                     </Col>
                     <Col span={11} push={1} style={{borderStyle:"solid",borderColor:"rgba(12, 153, 196, 0.837)",borderWidth:'1px',padding:'10px 0px 70px 15px'}}>
                         <DicomViewer4 instance={instance4} {...viewerProps4} onSetInstance={this.setInstance4} maxValue={instanceLength4}
                         onPrevInstance={this.prevInstance4} onNextInstance={this.nextInstance4} 
                         onPlay={this.play4} onZoomin={this.zoomin4} onZoomout={this.zoomout4}
-                        onRotateLeft={this.rotateLeft4} onRotateRight={this.rotateRight4}/>
+                        onRotateLeft={this.rotateLeft4} onRotateRight={this.rotateRight4} turnoff={this.turnoff}/>
                     </Col>
                 </Row>
             </div>

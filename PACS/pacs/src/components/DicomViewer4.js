@@ -16,6 +16,7 @@ import {
     DownOutlined
   } from '@ant-design/icons';
 import BrightnessSlider from './BrightnessSlider'
+import BrightnessMiniSlider from './BrightnessMiniSlider'
 const THREE = window.THREE = require('three');
 
 require('three/examples/js/postprocessing/EffectComposer.js');
@@ -45,17 +46,21 @@ class DicomViewer4 extends Component {
         };
         this.onRotateRight = this.props.onRotateRight || function () {
         };
+        this.turnoff = this.props.turnoff || function () {
+        };
         this.maxValue = this.props.maxValue;
         this.rayCaster = new THREE.Raycaster();
         this.state = {
             seedPoint: new THREE.Vector2(-1,-1),
             brightness:0,
             contrast:0,
+            floor:-2000,
+            ceil:2000,
         }
         this.setState = this.setState.bind(this);
         
     }
-
+    
     onWindowRisize = () => {
         this.camera.aspect = this.node.clientWidth / this.node.clientHeight;
         this.camera.updateProjectionMatrix();
@@ -63,6 +68,22 @@ class DicomViewer4 extends Component {
     };
     onSetBrightness = (value) => {
         this.setState({brightness:value});
+    }
+    onSetWindowLevel = (value) => {
+        this.setState({ceil:value[1],
+                        floor:value[0],});
+        console.log(this.state.floor, this.state.ceil)
+        this.turnoff();
+    }
+
+    onSetFloor = (value) => {
+        this.setState({floor:value});
+        // console.log("floor", this.state.floor)
+        this.turnoff();
+    }
+    onSetCeil = (value) => {
+        this.setState({ceil:value});
+        this.turnoff();
     }
 
     onSetContrast = (value) => {
@@ -133,6 +154,12 @@ class DicomViewer4 extends Component {
         const isLoaded = this.props.isLoaded;
         const instance = this.props.instance;
         var url = `/api/instances/${instance?instance.id:instance}/image`;
+        if(this.state.floor != -2000 || this.state.ceil != 2000){
+            const limit =Math.round(this.state.ceil - this.state.floor);
+            const mid = Math.round((this.state.ceil + this.state.floor)/2);
+            url = `/api/instances/${instance?instance.id:instance}/limit/${limit}/mid/${mid}`;
+            console.log(url)
+        }
         //设置场景 渲染器 和  相机
         const w = parseFloat(instance?instance['columns']:instance);
         const h = parseFloat(instance?instance['rows']:instance);
@@ -150,7 +177,7 @@ class DicomViewer4 extends Component {
                     type: 't', value: texture
                 },
                 seedPoint: {
-                    value: seedPoint
+                    value: new THREE.Vector2(-1, -1)
                 },
                 imgSize: {
                     value: new THREE.Vector2(w, h)
@@ -238,7 +265,7 @@ class DicomViewer4 extends Component {
             this.rect.needsUpdate = true;
             this.camera.matrixWorldNeedsUpdate = true;
             this.camera.updateProjectionMatrix();
-            console.log("当前拖动序号", instance.id)
+            // console.log("当前拖动序号", instance.id)
             this.renderPass=new THREE.RenderPass(this.scene,this.camera);
             this.composer.addPass(this.renderPass)
             var effectCopy = new THREE.ShaderPass(THREE.CopyShader);
@@ -282,42 +309,44 @@ class DicomViewer4 extends Component {
         //alert("父组件render了")
         let instance = this.props.instance;
         let maxValue = this.props.maxValue;
-        console.log('viewer组件获取的instance',instance)
-        console.log("获取的最大值",maxValue)
+        // console.log('viewer组件获取的instance',instance)
+        // console.log("获取的最大值",maxValue)
         return (
             <div ref={node => this.node = node} style={{height: window.innerHeight/2}}>
                 <div>
                     <SliderIn onSetInstance={this.onSetInstance} maxValue={maxValue} inputValue={instance?instance['instance_number']:1}/>
                 </div>
-                <div className={'rightTop'}>
+                <div className={'rightTop2'} >
                     
-                    <BrightnessSlider onSetColorScale={this.onSetColorScale}  onSetContrast={this.onSetContrast} onSetBrightness={this.onSetBrightness}/>
+                <BrightnessMiniSlider onSetColorScale={this.onSetColorScale}  onSetContrast={this.onSetContrast} onSetBrightness={this.onSetBrightness} onSetWindowLevel={this.onSetWindowLevel}
+                    onSetFloor={this.onSetFloor} onSetCeil={this.onSetCeil}/>
                 </div>
-                <div className={'leftTop'} >
-                    <div>img:{instance?instance.id:instance}</div>
+                <div className={'leftTop2'} >
+                <div>图像ID:{instance?instance.id:instance}</div>
                     <div>
-                        Patient ID: {instance?instance.parent.patient['patient_id']:instance}
+                        患者ID: {instance?instance.parent.patient['patient_id']:instance}
                     </div>
                     <div>
-                        Patient Name: {instance?instance.parent.patient['patient_name']:instance}
+                        患者姓名: {instance?instance.parent.patient['patient_name']:instance}
                     </div>
                     <div>
-                        Series ID: {instance?instance.parent.series['id']:instance}
+                        序列ID: {instance?instance.parent.series['id']:instance}
                     </div>
                     <div>
-                        Instance: {instance?instance['instance_number']:instance}
+                        图像序号: {instance?instance['instance_number']:instance}
                     </div>
                     <div>
-                        Modality: {instance?instance.parent.series['modality']:instance}
+                        影像分类: {instance?instance.parent.series['modality']:instance}
                     </div>
                     <div>
-                        Size: {instance?instance['columns']:instance}x{instance?instance['rows']:instance}
+                        尺寸: {instance?instance['columns']:instance}x{instance?instance['rows']:instance}
                     </div>
                     <div>
-                        Color Scheme: {instance?instance['photometric_interpretation']:instance}
+                        光度表示: {instance?instance['photometric_interpretation']:instance}
                     </div>
                 </div>
                 <div>
+
                     <Button type="primary" shape="circle" icon={<ArrowLeftOutlined />} onClick={this.onPrevInstance}/>
                     &nbsp
                     <Button type="primary" shape="circle" icon={<ArrowRightOutlined onClick={this.onNextInstance}/>} />

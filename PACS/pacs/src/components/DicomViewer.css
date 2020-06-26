@@ -10,6 +10,18 @@
     color:rgba(12, 153, 196, 0.837);
     background:transparent;
 }
+.leftTop2{
+    position: absolute;
+    top: 100px;
+    /*padding-top: 40px;*/
+    /*padding-left: 10px;*/
+    left: 15px;
+    z-index: 5;
+    display:block;
+    text-align: left;
+    color:rgba(12, 153, 196, 0.837);
+    background:transparent;
+}
 
 .rightTop{
     position: absolute;
@@ -23,14 +35,13 @@
 
 .rightTop2{
     position: absolute;
-    top: 120px;
+    top: 40px;
     right: 0px;
     z-index: 5;
     display:block;
     text-align: right;
     color: white;
 }
-
 .leftTop3{
     position: absolute;
     top: 40%;
