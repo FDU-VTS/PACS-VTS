@@ -88,7 +88,7 @@ class StudiesTable extends React.Component {
     // console.log(this.props.data)
     const columns = [
       {
-        title: 'Study ID',
+        title: '病例ID',
         dataIndex: 'study_id',
         key: 'study_id',
         ...this.getColumnSearchProps('study_id'),
@@ -99,31 +99,31 @@ class StudiesTable extends React.Component {
         </div>),
       },
       {
-        title: 'Patient Name',
+        title: '患者姓名',
         dataIndex: 'patient_name',
         key: 'patient_name',
         ...this.getColumnSearchProps('patient_name'),
       },
       {
-        title: 'Patient ID',
+        title: '患者ID',
         dataIndex: 'patient_id',
         key: 'patient_id',
         ...this.getColumnSearchProps('patient_id'),
       },
       {
-        title: 'Study Description',
+        title: '病例描述',
         dataIndex: 'study_description',
         key: 'study_description',
         ...this.getColumnSearchProps('study_description'),
       },
       {
-        title: 'Modality',
+        title: '影像分类',
         dataIndex: 'modality',
         key: 'modality',
         ...this.getColumnSearchProps('modality'),
       },
       {
-        title: 'Images Count',
+        title: '图像数量',
         dataIndex: 'images_count',
         key: 'images_count',
         //...this.getColumnSearchProps('images_count'),
@@ -137,13 +137,13 @@ class StudiesTable extends React.Component {
             <div className="logo" />
             <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
               <Menu.Item key="1" >
-                <Link to='/patients'>Patients</Link>
+                <Link to='/patients'>病人</Link>
               </Menu.Item>
               <Menu.Item key="2" >
-                <Link to='/studies'>Studies</Link>
+                <Link to='/studies'>病例</Link>
               </Menu.Item>
               <Menu.Item key="3" >
-                <Link to='/dicom_nodes'>DICOMServer</Link>
+                <Link to='/api/dcm/upload'>数据库管理</Link>
               </Menu.Item>
             </Menu>
           </Header>

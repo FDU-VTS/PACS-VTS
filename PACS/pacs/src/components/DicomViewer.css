@@ -3,7 +3,7 @@
     top: 100px;
     /*padding-top: 40px;*/
     /*padding-left: 10px;*/
-    left: 40px;
+    left: 100px;
     z-index: 5;
     display:block;
     text-align: left;
@@ -13,8 +13,8 @@
 
 .rightTop{
     position: absolute;
-    top: 120px;
-    right: 50px;
+    top: 100px;
+    right: -100px;
     z-index: 5;
     display:block;
     text-align: right;

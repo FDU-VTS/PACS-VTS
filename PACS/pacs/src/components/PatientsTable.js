@@ -86,7 +86,7 @@ class PatientsTable extends React.Component {
   render() {
     const columns = [
       {
-        title: 'Patient ID',
+        title: '患者ID',
         dataIndex: 'patient_id',
         key: 'patient_id',
         width: '15%',
@@ -98,35 +98,35 @@ class PatientsTable extends React.Component {
         </div>),
       },
       {
-        title: 'Patient Name',
+        title: '患者姓名',
         dataIndex: 'patient_name',
         key: 'patient_name',
         width: '17.5%',
         ...this.getColumnSearchProps('patient_name'),
       },
       {
-        title: 'Patient Gender',
+        title: '患者性别',
         dataIndex: 'patient_sex',
         key: 'patient_sex',
         width: '17.5%',
         ...this.getColumnSearchProps('patient_sex'),
       },
       {
-        title: 'Patient Birthdate',
+        title: '患者生日',
         dataIndex: 'patient_birthdate',
         key: 'patient_birthdate',
         width: '17.5%',
         ...this.getColumnSearchProps('patient_birthdate'),
       },
       {
-        title: 'Patient Age',
+        title: '患者年龄',
         dataIndex: 'patient_age',
         key: 'patient_age',
         width: '15%',
         ...this.getColumnSearchProps('patient_age'),
       },
       {
-        title: 'Images Count',
+        title: '图像数量',
         dataIndex: 'images_count',
         key: 'images_count',
         //...this.getColumnSearchProps('images_count'),
@@ -140,13 +140,13 @@ class PatientsTable extends React.Component {
             <div className="logo" />
             <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
               <Menu.Item key="1" >
-                <Link to='/patients'>Patients</Link>
+                <Link to='/patients'>病人</Link>
               </Menu.Item>
               <Menu.Item key="2" >
-                <Link to='/studies'>Studies</Link>
+                <Link to='/studies'>病例</Link>
               </Menu.Item>
               <Menu.Item key="3" >
-                <Link to='/api/dcm/upload'>DICOMServer</Link>
+                <Link to='/api/dcm/upload'>数据库管理</Link>
               </Menu.Item>
             </Menu>
           </Header>

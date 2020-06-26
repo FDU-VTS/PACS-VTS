@@ -9,7 +9,7 @@ const THREE = window.THREE = require('three');
 require('three/examples/js/postprocessing/EffectComposer.js');
 require('three/examples/js/postprocessing/ShaderPass.js');
 require('three/examples/js/postprocessing/RenderPass.js');
-require('three/examples/js/shaders/DotScreenShader.js');
+require('./RgbLimiter.js');
 require('three/examples/js/shaders/BrightnessContrastShader.js');
 require('three/examples/js/shaders/CopyShader.js');
 
@@ -29,20 +29,49 @@ class DicomViewer extends Component {
             seedPoint: new THREE.Vector2(-1,-1),
             brightness:0,
             contrast:0,
+            floor:-2000,
+            ceil:2000,
         }
         this.setState = this.setState.bind(this);
         this.onSetInstance = this.props.onSetInstance || function () {
         };
         this.onSetColorScale = this.props.onSetColorScale || function () {
         };
+        this.turnoff = this.props.turnoff || function () {
+        };
+
     }
 
     onSetBrightness = (value) => {
         this.setState({brightness:value});
+        this.turnoff();
     }
+    // onSetGamma= (value) => {
+    //     this.setState({ceil:value[1],
+    //                     floor:value[0],});
+    // }
+
+    onSetWindowLevel = (value) => {
+        this.setState({ceil:value[1],
+                        floor:value[0],});
+        console.log(this.state.floor, this.state.ceil)
+        this.turnoff();
+    }
+
+    onSetFloor = (value) => {
+        this.setState({floor:value});
+        // console.log("floor", this.state.floor)
+        this.turnoff();
+    }
+    onSetCeil = (value) => {
+        this.setState({ceil:value});
+        this.turnoff();
+    }
+
 
     onSetContrast = (value) => {
         this.setState({contrast:value});
+        this.turnoff();
     }
     
     onWindowRisize = () => {
@@ -56,10 +85,11 @@ class DicomViewer extends Component {
     };
 
     onMouseClick = (e) => {
-
+        
     }
 
     onDistanceClick = (e) => {
+        this.turnoff();
         const scene = this.scene;
         const camera = this.camera;
         const rayCaster = this.rayCaster;
@@ -119,6 +149,7 @@ class DicomViewer extends Component {
     };
 
     onAngleClick = (e) => {
+        this.turnoff();
         const scene = this.scene;
         const camera = this.camera;
         const rayCaster = this.rayCaster;
@@ -218,6 +249,7 @@ class DicomViewer extends Component {
     };
 
     onAreaClick = (e) => {
+        this.turnoff();
         const scene = this.scene;
         const camera = this.camera;
         const rayCaster = this.rayCaster;
@@ -384,10 +416,26 @@ class DicomViewer extends Component {
         const alt = `didupdate ${this.props.rotation}`
         // alert(alt);
         const instance = this.props.instance;
-        const url = `/api/instances/${instance?instance.id:instance}/image`;
-        //设置场景 渲染器 和  相机
-        const w = parseFloat(instance['columns']);
-        const h = parseFloat(instance['rows']);
+        // console.log("instanceid",instance?instance.id:instance)
+        var url = `/api/instances/${instance?instance.id:instance}/image`;
+        const instancesid = this.props.instancesid;
+        const pluginsid = this.props.pluginsid;
+        const flagimage = this.props.flagimage;
+        if(this.state.floor != -2000 || this.state.ceil != 2000){
+            const limit =Math.round(this.state.ceil - this.state.floor);
+            const mid = Math.round((this.state.ceil + this.state.floor)/2);
+            url = `/api/instances/${instance?instance.id:instance}/limit/${limit}/mid/${mid}`;
+            console.log(url)
+        }
+        if(flagimage===true){
+            
+             url = `/api/instances/${instancesid}/process/by_plugin/${pluginsid}/image`;
+         }
+        // console.log("flagimage",flagimage);
+        // console.log("url",url);
+        //设置场景 渲染器 和 相机
+        const w = parseFloat(instance?instance['columns']:instance);
+        const h = parseFloat(instance?instance['rows']:instance);
         // console.log("长宽",w,h)
         
         this.node.appendChild(this.renderer.domElement);
@@ -413,6 +461,7 @@ class DicomViewer extends Component {
 
         if(measure === 'distance') {
             if(modefirst){
+                
                 console.log("执行first清除")
                 uv = undefined;
                 uv2 = undefined;
@@ -546,6 +595,9 @@ class DicomViewer extends Component {
             // console.log(this.rect.rotation.z);
             // console.log("camera角度");
             // console.log(this.camera.fov);
+            if(measure != 'clear'){
+                this.rect.rotation.z=0;
+            }
             this.scene.add(this.rect);
             this.rect.material = material;
             //this.rect.geometry = geometry;
@@ -561,7 +613,11 @@ class DicomViewer extends Component {
             this.BrightnessContrastShader=new THREE.ShaderPass(THREE.BrightnessContrastShader);
             this.BrightnessContrastShader.uniforms['brightness'].value=this.state.brightness;
             this.BrightnessContrastShader.uniforms['contrast'].value=this.state.contrast;
+            // this.RgbLimiter = new THREE.ShaderPass(THREE.RgbLimiter);
+            // this.RgbLimiter.uniforms['ceil'].value = this.state.ceil;
+            // this.RgbLimiter.uniforms['floor'].value = this.state.floor;
             this.composer.addPass(this.BrightnessContrastShader);
+            // this.composer.addPass(this.RgbLimiter);
             this.composer.addPass(effectCopy);
             this.renderer.render(this.scene, this.camera); 
             this.composer.render();
@@ -599,37 +655,38 @@ class DicomViewer extends Component {
         let instance = this.props.instance;
         // console.log('viewer组件获取的instance',instance)
         return (
-            <div ref={node => this.node = node} style={{height: window.innerHeight}}>
-                <div>
+            <div ref={node => this.node = node} style={{height: window.innerHeight,padding:'10px 0px 70px 100px'}}>
+                <div style={{width:window.innerWidth}}>
                     
                     <SliderIn  onSetInstance={this.onSetInstance} maxValue={maxValue} inputValue={instance?instance['instance_number']:1}/>
                 </div>
                 <div className={'rightTop'}>
                     
-                    <BrightnessSlider onSetColorScale={this.onSetColorScale}  onSetContrast={this.onSetContrast} onSetBrightness={this.onSetBrightness}/>
+                    <BrightnessSlider onSetColorScale={this.onSetColorScale}  onSetContrast={this.onSetContrast} onSetBrightness={this.onSetBrightness} onSetWindowLevel={this.onSetWindowLevel}
+                    onSetFloor={this.onSetFloor} onSetCeil={this.onSetCeil}/>
                 </div>
                 <div className={'leftTop'} >
-                    <div>img:{instance?instance.id:instance}</div>
+                    <div>图像ID:{instance?instance.id:instance}</div>
                     <div>
-                        Patient ID: {instance?instance.parent.patient['patient_id']:instance}
+                        患者ID: {instance?instance.parent.patient['patient_id']:instance}
                     </div>
                     <div>
-                        Patient Name: {instance?instance.parent.patient['patient_name']:instance}
+                        患者姓名: {instance?instance.parent.patient['patient_name']:instance}
                     </div>
                     <div>
-                        Series ID: {instance?instance.parent.series['id']:instance}
+                        序列ID: {instance?instance.parent.series['id']:instance}
                     </div>
                     <div>
-                        Instance: {instance?instance['instance_number']:instance}
+                        图像序号: {instance?instance['instance_number']:instance}
                     </div>
                     <div>
-                        Modality: {instance?instance.parent.series['modality']:instance}
+                        影像分类: {instance?instance.parent.series['modality']:instance}
                     </div>
                     <div>
-                        Size: {instance?instance['columns']:instance}x{instance?instance['rows']:instance}
+                        尺寸: {instance?instance['columns']:instance}x{instance?instance['rows']:instance}
                     </div>
                     <div>
-                        Color Scheme: {instance?instance['photometric_interpretation']:instance}
+                        光度表示: {instance?instance['photometric_interpretation']:instance}
                     </div>
                 </div>
                 

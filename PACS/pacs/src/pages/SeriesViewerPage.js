@@ -34,8 +34,12 @@ class SeriesViewerPage extends Component {
             installedPlugins:[],
             rtx:'off',
             measure:'clear',
+            flagimage:false,
+            instancesid:undefined,
+            pluginsid:undefined
         };
         this.setState = this.setState.bind(this);
+        this.onPlugin = this.onPlugin.bind(this);
     }
 
     componentWillMount() {
@@ -44,18 +48,16 @@ class SeriesViewerPage extends Component {
         if(!this.state.isLoaded) {
 
             DicomService.findInstancesBySeriesId(seriesId, instances => {
-                this.setState({instances: instances, isLoaded:true,});
-                // console.log("instances1",this.state.instances);
+                const len=instances.length;
+                 instances.map(instance =>{
+                     instance['instance_number']=(len-instance['instance_number'])+1
+                 })
+                this.setState({instances: instances.reverse(), isLoaded:true,});
             })
             
         }
         const show = [];
         PluginsService.findPlugins(Plugins => {
-            // installedPlugins = installedPlugins.reduce((pluginsMap, plugin) => {
-            //     pluginsMap[plugin.name] = plugin;
-            //     return pluginsMap;
-            // }, {});
-            // console.log("plugins",Plugins);
             Plugins.map(plugin => {
                 show.push({
                     plugin_id: plugin.id,
@@ -68,63 +70,77 @@ class SeriesViewerPage extends Component {
 
     }
 
+    componentDidUpdate(){
+        // console.log("flagnew",this.state.flagimage);
+    }
+
+    onPlugin(instanceid,pluginid) {
+        // PluginsService.onPlugin1(instanceid,pluginid,instance => {
+        //     this.setState({instances:instance});
+        // });
+        console.log("子传父",instanceid, pluginid);
+        const id1=instanceid;
+        const id2=pluginid;
+        this.setState({flagzoom: false, flagimage:true});
+        this.setState({instancesid: id1, pluginsid: id2});
+        console.log("id",this.state.instancesid,this.state.pluginsid);
+    }
+
+    // onPlugin1 (instanceid,pluginid,f){
+    //     fetch(
+    //         `/api/instances/${instanceid}/process/by_plugin/${pluginid}/image`,{
+    //             method:"POST",
+    //             headers:{
+    //                 'Content-Type':'image/jpeg;charset=base64;'
+    //             }
+    //         }
+    //     ).then((response)=>{
+    //         console.log("newinstance",response);
+    //         if (response.status >= 200 && response.status < 300) {
+    //             return response;
+    //         }
+    //         console.log(response.status);
+    //         const error = new Error(`HTTP Error ${response.statusText}`);
+    //         error.status = response.statusText;
+    //         error.response = response;
+    //         throw error;
+    //     }).then(response => {           
+    //         return response.json();
+    //     }).then(f);
+        //.catch((err) => {
+        //     alert(err.response?err.response.data['message']:err.response);
+        //     //this.setState({});
+        // })
+    //}
+    
+
+    noPlugin = () => {
+        this.setState({flagzoom: false, flagimage:false});
+    }
+
     onClear = () => {
         this.setState({rtx:'off',
                     measure:'clear'})
+        this.setState({flagzoom: false});
     }
 
     onDistance = () => {
         this.setState({rtx:'on',
                     measure:'distance'})
+        this.setState({flagzoom: false});
     }
 
     onAngle = () => {
         this.setState({rtx:'on',
                     measure:'angle'})
+        this.setState({flagzoom: false});
     }
 
     onArea = () => {
         this.setState({rtx:'on',
                     measure:'area'})
+        this.setState({flagzoom: false, rotation: null});
     }
-
-    onPlugin = (instanceid) => {
-            axios.post(
-                `/api/instances/${instanceid}/process/by_plugin/3/image`,{
-                    headers:{
-                        'Content-Type':'image/jpeg'
-                    }
-                }
-            ).then((response)=>{
-                // console.log("newinstance",response);
-                const seriesId = this.state.seriesId;
-                DicomService.findInstancesBySeriesId(seriesId, instances => {
-                    this.setState({instances: instances, isLoaded:true,});
-                    // console.log("instances2",this.state.instances);
-                })
-                const show = [];
-                PluginsService.findPlugins(Plugins => {
-                    // installedPlugins = installedPlugins.reduce((pluginsMap, plugin) => {
-                    //     pluginsMap[plugin.name] = plugin;
-                    //     return pluginsMap;
-                    // }, {});
-                    // console.log("plugins",Plugins);
-                    Plugins.map(plugin => {
-                        show.push({
-                            plugin_id: plugin.id,
-                            plugin_name: plugin.name,
-                        });
-                    })           
-                    this.setState({installedPlugins:show});
-                    //console.log("plugins2",this.state.installedPlugins);
-                });
-            }).catch((err) => {
-                alert(err.response.data['message']);
-                this.setState({});
-            })
-        //}
-        
-    };
 
     setInstance = (indexInput) => {
         const currentInstanceId = this.state.index;
@@ -138,9 +154,7 @@ class SeriesViewerPage extends Component {
         this.setState({flagzoom: false});
     }
 
-    setColorScale = (inputText) => {
-        this.setState({colorScale: inputText,});
-    }
+
 
     nextInstance = () => {
         const currentInstanceId = this.state.index;
@@ -197,6 +211,12 @@ class SeriesViewerPage extends Component {
             this.setState({ifplay:false})}
         this.setState({flagzoom: false});
     };
+
+
+    turnoff = () => {
+        this.setState({flagzoom:false,
+        rotation:null})
+    }
 
     fplay = () => {
         if(!this.state.ifplay){
@@ -255,6 +275,7 @@ class SeriesViewerPage extends Component {
     };
     setColorScale = (color) => {
         this.setState({colorScale: color});
+        this.setState({flagzoom: false, rotation:null});
     };
 
     render() {
@@ -278,9 +299,12 @@ class SeriesViewerPage extends Component {
             ifplay:this.state.ifplay,
             rtx:this.state.rtx,
             measure:this.state.measure,
+            flagimage:this.state.flagimage,
+            instancesid:this.state.instancesid,
+            pluginsid:this.state.pluginsid
         };
         const instanceLength = (this.state.instances || []).length;
-        
+        // console.log("flag",this.state.flagimage);
         return (
             <div style={{background:"black"}} tabIndex={'0'} >
                 {/* 把一个instance传过去 */}
@@ -290,7 +314,7 @@ class SeriesViewerPage extends Component {
                 onDistance = {this.onDistance}
                 onAngle = {this.onAngle}
                 onArea = {this.onArea}
-                onPlugin={this.onPlugin}
+                onPlugin={this.onPlugin} noPlugin={this.noPlugin}
                 onPrevInstance={this.prevInstance} onNextInstance={this.nextInstance} 
                 onPlay={this.play} onZoomin={this.zoomin} onZoomout={this.zoomout}
                 onRotateLeft={this.rotateLeft} onRotateRight={this.rotateRight} onMNextInstance={this.mnextInstance} onFNextInstance={this.fnextInstance} 
@@ -299,7 +323,7 @@ class SeriesViewerPage extends Component {
                 {/* <DicomViewer instance={instance} {...viewerProps}/> */}
                 <Row>
                     <Col span={20}>
-                        <DicomViewer instance={instance} {...viewerProps} maxValue={instanceLength} onSetInstance={this.setInstance} onSetColorScale={this.setColorScale}/>
+                        <DicomViewer instance={instance} {...viewerProps} turnoff={this.turnoff} maxValue={instanceLength} onSetInstance={this.setInstance} onSetColorScale={this.setColorScale}/>
                     </Col>
                     <Col span={11}>
                         {/* <DicomViewer2 instance={instance} {...viewerProps}/> */}
@@ -310,4 +334,4 @@ class SeriesViewerPage extends Component {
     }
 }
 
-export default SeriesViewerPage; 
+export default SeriesViewerPage;

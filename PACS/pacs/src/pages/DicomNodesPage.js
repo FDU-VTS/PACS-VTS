@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import StudiesService from "../services/DicomService";
 import * as axios from "axios";
 import DicomNodesTable from '../components/DicomNodesTable'
+import { Modal } from 'antd';
 
 
 class DicomNodesPage extends Component {
@@ -13,7 +14,9 @@ class DicomNodesPage extends Component {
             patients: [],
             studies: [],
             patientsList: [],
-            studiesList: []
+            studiesList: [],
+            files: [],
+            isPending: false
         };
         this.setState = this.setState.bind(this);
     }
@@ -23,12 +26,12 @@ class DicomNodesPage extends Component {
     }
     componentWillMount() {
         
-        // console.log("开始获取Patients")
+        console.log("开始获取Patients")
         
             StudiesService.findPatients(patientList => {
                 const show=[];
-                // console.log("找到Patients了 如下")
-                // console.log(patientList);
+                console.log("找到Patients了 如下")
+                console.log(patientList);
                 patientList.map(study => {
                     //for(var i=0;i<100000;i++){
                         show.push({
@@ -49,8 +52,8 @@ class DicomNodesPage extends Component {
 
             StudiesService.findStudies(studyList => {
                 const show=[];
-                // console.log("获取到studies了")
-                // console.log(studyList);
+                console.log("获取到studies了")
+                console.log(studyList);
                 studyList.map(study => {
                     show.push({
                         patient_id: study.patient["patient_id"],
@@ -68,8 +71,8 @@ class DicomNodesPage extends Component {
 
             StudiesService.findSeries(serieList => {
                 const show=[];
-                // console.log("获取到series了")
-                // console.log(serieList);
+                console.log("获取到series了")
+                console.log(serieList);
                 serieList.map(series => {
                     show.push({
                         id:series.id,
@@ -86,31 +89,112 @@ class DicomNodesPage extends Component {
                     seriesList: show})
             });
     }
-    onAddDicomNode = (e) => {
-        const value = e.target.value;
-        const name = e.target.name;
-        const params = this.state.newDicomNode;
-        params[name] = value;
-        this.setState({
-            newDicomNode: params
-        })
-        const newDicomNode = this.state.newDicomNode;
+    onAddDicomNode = () => {
+        // const value = e.target.value;
+        // const name = e.target.name;
+        // const params = this.state.newDicomNode;
+        // params[name] = value;
+        // this.setState({
+        //     newDicomNode: params
+        // })
+        // const newDicomNode = this.state.newDicomNode;
         // console.log("上传了");
-        axios.post('/api/dcm/upload', JSON.stringify(newDicomNode),
-            {
-                responseType: 'blob',
-                headers: {
-                    'Content-Type': 'text/html; charset=UTF-8',
-                    'Accept': 'application/octet-stream'
-                }
-            }
-        )
+        // axios.post('/api/dcm/upload', JSON.stringify(newDicomNode),
+        //     {
+        //         responseType: 'blob',
+        //         headers: {
+        //             'Content-Type': 'text/html; charset=UTF-8',
+        //             'Accept': 'application/octet-stream'
+        //         }
+        //     }
+        // )
+        const files = this.state.files;
+        if(files.length <= 0)
+            return;
+        const form = new FormData();
+        for(let i = 0; i < files.length; i++){
+            const file = files[i];
+            form.append(`file${i}`, file, file.name);
+        }
+        const config = {
+            headers: { 'content-type': 'multipart/form-data' }
+        };
+        axios.post('/api/dcm/upload', form, config).then((resp) => {
+            alert("所有文件都上传了!");
+            this.setState({
+                isPending: false
+            });
+        }).catch((resp) => {
+            alert("文件不能下载！");
+            this.setState({
+                isPending: false
+            });
+        });
+        this.setState({
+            isPending: true
+        });
     };
 
-    onDeleteDicomNode = (dicomNode) => {
-        axios.delete(
-            `/api/patients/${dicomNode}`
-        )
+    onDeletePatients = (dicomNode) => {
+        Modal.confirm({
+            title: '确认删除此项目吗?',
+            content: '',
+            okText: '是',
+            okType: 'danger',
+            cancelText: '否',
+            onOk: () => {
+                alert("删除成功！");
+                axios.delete(
+                    `/api/patients/${dicomNode}`
+                )
+            }
+            ,
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
+        
+    };
+
+    onDeleteStudies = (dicomNode) => {
+        Modal.confirm({
+            title: '确认删除此项目吗?',
+            content: '',
+            okText: '是',
+            okType: 'danger',
+            cancelText: '否',
+            onOk: () => {
+                alert("删除成功！");
+                axios.delete(
+                    `/api/studies/${dicomNode}`
+                )
+            }
+            ,
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
+        
+    };
+
+    onDeleteSeries = (dicomNode) => {
+        Modal.confirm({
+            title: '确认删除此项目吗?',
+            content: '',
+            okText: '是',
+            okType: 'danger',
+            cancelText: '否',
+            onOk: () => {
+                alert("删除成功！");
+                axios.delete(
+                     `/api/series/${dicomNode}`
+            );
+            }
+            ,
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
     };
 
     onDownloadImages = (dicomNode) => {
@@ -121,9 +205,12 @@ class DicomNodesPage extends Component {
 
         return (
             <div>
-                <DicomNodesTable onAddDicomNode={this.onAddDicomNode} onDeleteDicomNode={this.onDeleteDicomNode}
+                <DicomNodesTable onAddDicomNode={this.onAddDicomNode} 
+                onDeletePatients={this.onDeletePatients} onDeleteStudies={this.onDeleteStudies} 
+                onDeleteSeries={this.onDeleteSeries}
                 patientsdata={this.state.patientsList} studiesdata={this.state.studiesList}
-                seriesdata={this.state.seriesList}/>
+                seriesdata={this.state.seriesList}
+                isPending={this.state.isPending}/>
             </div>
         )
     }

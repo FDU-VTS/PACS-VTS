@@ -106,7 +106,7 @@ class StudytoSeriesTable extends Component {;
         // console.log(this.props.data.series)
     const columns = [
       {
-        title: 'Series ID',
+        title: '病例序列ID',
         dataIndex: 'id',
         key: 'id',
         ...this.getColumnSearchProps('id'),
@@ -120,31 +120,31 @@ class StudytoSeriesTable extends Component {;
         </div>),
       },
       {
-        title: 'Modality',
+        title: '影像分类',
         dataIndex: 'modality',
         key: 'modality',
         ...this.getColumnSearchProps('modality'),
       },
       {
-        title: 'Body Part Examined',
+        title: '扫描部位',
         dataIndex: 'body_part_examined',
         key: 'body_part_examined',
         ...this.getColumnSearchProps('body_part_examined'),
       },
       {
-        title: 'Patient Position',
+        title: '患者姿态',
         dataIndex: 'patient_position',
         key: 'patient_position',
         ...this.getColumnSearchProps('patient_position'),
       },
       {
-        title: 'Series Number',
+        title: '序列号',
         dataIndex: 'series_number',
         key: 'series_number',
         ...this.getColumnSearchProps('series_number'),
       },
       {
-        title: 'Image Count',
+        title: '图像数量',
         dataIndex: 'images_count',
         key: 'images_count',
         //...this.getColumnSearchProps('images_count'),
@@ -161,13 +161,13 @@ class StudytoSeriesTable extends Component {;
                         <div className="logo" />
                         <Menu theme="dark" mode="horizontal" >
                         <Menu.Item key="1" >
-                            <Link to='/patients'>Patients</Link>
+                            <Link to='/patients'>病人</Link>
                         </Menu.Item>
                         <Menu.Item key="2" >
-                            <Link to='/studies'>Studies</Link>
+                            <Link to='/studies'>病例</Link>
                         </Menu.Item>
                         <Menu.Item key="3" >
-                            <Link to='/api/dcm/upload'>DICOMServer</Link>
+                            <Link to='/api/dcm/upload'>数据库管理</Link>
                         </Menu.Item>
                         </Menu>
                     </Header>
@@ -176,18 +176,18 @@ class StudytoSeriesTable extends Component {;
                         <div className="site-layout-background" style={{ padding: 24, minHeight: 380 }}>
                             <Row style={ {background: 'lightgrey' , padding: '30px'}}>
                                 <Col span={12}>
-                                    <Card title="Patient" bordered={false}>
-                                        <h5>Patient Name: {study.patient_name}</h5>
-                                        <h5>Patient ID: {study.patient_id}</h5>
-                                        <h5>Patient Gender: {study.patient_gender}</h5>
-                                        <h5>Patient Age: {study.patient_age}</h5>
+                                    <Card title="患者信息" bordered={false}>
+                                        <h5>患者姓名: {study.patient_name}</h5>
+                                        <h5>患者ID: {study.patient_id}</h5>
+                                        <h5>患者性别: {study.patient_gender}</h5>
+                                        <h5>患者年龄: {study.patient_age}</h5>
                                     </Card>
                                 </Col>
                                 <Col span={12}>
-                                    <Card title="Study" bordered={false}>
-                                        <h5>Study Description: {study.study_description}</h5>
-                                        <h5>Study Date: {study.study_date}</h5>
-                                        <h5>Referring Physician: {study.study_referring_physician}</h5>
+                                    <Card title="病例信息" bordered={false}>
+                                        <h5>病例描述: {study.study_description}</h5>
+                                        <h5>病例日期: {study.study_date}</h5>
+                                        <h5>咨询医生: {study.study_referring_physician}</h5>
                                         <h5>&nbsp;</h5>
                                     </Card>
                                 </Col>                               

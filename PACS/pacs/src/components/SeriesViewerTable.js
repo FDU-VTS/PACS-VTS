@@ -45,6 +45,8 @@ class SeriesViewerTable extends React.Component {
         };
         this.onPlugin = this.props.onPlugin || function () {
         };
+        this.noPlugin = this.props.noPlugin || function () {
+        };
         this.onClear = this.props.onClear || function () {
         };
         this.onDistance = this.props.onDistance || function () {
@@ -60,32 +62,32 @@ class SeriesViewerTable extends React.Component {
           <Menu>
             <Menu.Item>
               <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale("main")}>
-                main
+                {/* main */}原始
               </a >
             </Menu.Item>
             <Menu.Item>
               <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale("heatmap")}>
-                heatmap
+                {/* heatmap */}热量图
               </a >
             </Menu.Item>
             <Menu.Item>
               <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('inverseHeatmap')}>
-                inverseHeatmap
+                {/* inverseHeatmap */}反相
               </a >
             </Menu.Item>
             <Menu.Item>
               <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('hotRed')} >
-                hotRed
+                {/* hotRed */}红色通道
               </a >
             </Menu.Item>
             <Menu.Item>
               <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('hotGreen')} >
-                hotGreen
+                {/* hotGreen */}绿色通道
               </a >
             </Menu.Item>
             <Menu.Item>
               <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('hotBlue')}>
-                hotBlue
+                {/* hotBlue */}蓝色通道
               </a >
             </Menu.Item>
             <Menu.Item>
@@ -99,54 +101,60 @@ class SeriesViewerTable extends React.Component {
           <Menu>
             <Menu.Item>
               <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale("main")}>
-                main
+                {/* main */}原始
               </a >
             </Menu.Item>
             <Menu.Item>
               <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('sobel')}>
-                sobel
+                {/* sobel */}索贝尔算子
               </a >
             </Menu.Item>
             <Menu.Item>
               <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('sharpen')} >
-                sharpen
+                {/* sharpen */}锐化
               </a >
             </Menu.Item>
             <Menu.Item>
               <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('emboss')} >
-                emboss
+                {/* emboss */}浮雕
               </a >
             </Menu.Item>
             <Menu.Item>
               <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('laplacian')}>
-                laplacian
+                {/* laplacian */}拉普拉斯算子
               </a >
             </Menu.Item>
-            <Menu.Item>
+            {/* <Menu.Item>
               <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onSetColorScale('medianBlur')}>
                 medianBlur
               </a >
-            </Menu.Item>
+            </Menu.Item> */}
           </Menu>
         );
-        // console.log("plugins3",this.props.data);
+        console.log("plugins3",this.props.data);
         const ids = [];
         this.props.data.map(plugin=>{
           ids.push({
             singleid:plugin.plugin_id
           });
-        })
-        // console.log("id",ids[0],"+",ids[1]);
+        })       
         const id1=ids[0]
+        const id2=ids[1]
+        console.log("ids",id1?id1.singleid:id1,"+",id2?id2.singleid:id2);
           const menu3 = (
             <Menu>
               <Menu.Item>
-                <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onPlugin(this.props.instance.id)}>
+                <a target="_blank" rel="noopener noreferrer" onClick={this.noPlugin}>
+                  恢复
+                </a >
+              </Menu.Item>
+              <Menu.Item>
+                <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onPlugin(this.props.instance.id,id1?id1.singleid:id1)}>
                   fcm
                 </a >
               </Menu.Item>
               <Menu.Item>
-                <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onPlugin(this.props.instance.id)}>
+                <a target="_blank" rel="noopener noreferrer" onClick={()=>this.onPlugin(this.props.instance.id,id2?id2.singleid:id2)}>
                   kmeans
                 </a >
               </Menu.Item>
@@ -199,21 +207,21 @@ class SeriesViewerTable extends React.Component {
                 <Menu.Item>
                   <Dropdown overlay={menu1}>
                       <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={searchstyle}>
-                      Color<DownOutlined style={searchbuttonstyle}/>
+                      颜色模式<DownOutlined style={searchbuttonstyle}/>
                       </a >
                   </Dropdown>
                 </Menu.Item>
                 <Menu.Item>
                   <Dropdown overlay={menu2}>
                       <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={searchstyle}>
-                      Filter<DownOutlined style={searchbuttonstyle}/>
+                      滤波器<DownOutlined style={searchbuttonstyle}/>
                       </a >
                   </Dropdown>
                 </Menu.Item>
                 <Menu.Item>
                   <Dropdown overlay={menu3}>
                       <a className="ant-dropdown-link" onClick={e => e.preventDefault()} style={searchstyle}>
-                      Plugins<DownOutlined style={searchbuttonstyle}/>
+                      插件<DownOutlined style={searchbuttonstyle}/>
                       </a >
                   </Dropdown>
                 </Menu.Item>

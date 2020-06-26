@@ -5,16 +5,13 @@ import '../index.css';
 import { Layout, Menu } from 'antd';
 import {Link} from "react-router-dom";
 import { UploadOutlined, 
-         DeleteOutlined,
-         MenuUnfoldOutlined,
-        MenuFoldOutlined,
-        PieChartOutlined,
-        DesktopOutlined,
-        ContainerOutlined, } from '@ant-design/icons';
+         DeleteOutlined, } from '@ant-design/icons';
 import { Upload, Button } from 'antd';
 import { Table, Input, Space,Tabs, Select} from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
+import { Dimmer, Loader } from "semantic-ui-react";
+
 
 
 class DicomNodesTable extends React.Component {
@@ -23,7 +20,11 @@ class DicomNodesTable extends React.Component {
     this.setState.bind(this);
     this.onAddDicomNode = this.props.onAddDicomNode || function () {
     };
-    this.onDeleteDicomNode = this.props.onDeleteDicomNode || function () {
+    this.onDeletePatients = this.props.onDeletePatients || function () {
+    };
+    this.onDeleteStudies = this.props.onDeleteStudies || function () {
+    };
+    this.onDeleteSeries = this.props.onDeleteSeries || function () {
     };
   }
   state = {
@@ -116,42 +117,42 @@ class DicomNodesTable extends React.Component {
         render: text => (<div>            
           <Space size="middle">
             <a>{text}</a>
-            <Button onClick={() => this.onDeleteDicomNode(text)}>Delete</Button>
+            <Button onClick={() => this.onDeletePatients(text)}>删除</Button>
           </Space>
       </div>),
       },
       {
-        title: 'Patient ID',
+        title: '患者ID',
         dataIndex: 'patient_id',
         key: 'patient_id',
         ...this.getColumnSearchProps('patient_id'),
       },
       {
-        title: 'Patient Name',
+        title: '患者姓名',
         dataIndex: 'patient_name',
         key: 'patient_name',
         ...this.getColumnSearchProps('patient_name'),
       },
       {
-        title: 'Patient Gender',
+        title: '患者性别',
         dataIndex: 'patient_sex',
         key: 'patient_sex',
         ...this.getColumnSearchProps('patient_sex'),
       },
       {
-        title: 'Patient Birthdate',
+        title: '患者生日',
         dataIndex: 'patient_birthdate',
         key: 'patient_birthdate',
         ...this.getColumnSearchProps('patient_birthdate'),
       },
       {
-        title: 'Patient Age',
+        title: '患者年龄',
         dataIndex: 'patient_age',
         key: 'patient_age',
         ...this.getColumnSearchProps('patient_age'),
       },
       {
-        title: 'Images Count',
+        title: '图像数量',
         dataIndex: 'images_count',
         key: 'images_count',
         //...this.getColumnSearchProps('images_count'),
@@ -159,43 +160,43 @@ class DicomNodesTable extends React.Component {
     ];
     const columns_studies = [
       {
-        title: 'Study ID',
+        title: '病例ID',
         dataIndex: 'study_id',
         key: 'study_id',
         ...this.getColumnSearchProps('study_id'),
         render: text => (<div>            
           <Space size="middle">
             <a>{text}</a>
-            <Button onClick={() => this.onDeleteDicomNode(text)}>Delete</Button>
+            <Button onClick={() => this.onDeleteStudies(text)}>删除</Button>
           </Space>
       </div>),
       },
       {
-        title: 'Patient Name',
+        title: '患者姓名',
         dataIndex: 'patient_name',
         key: 'patient_name',
         ...this.getColumnSearchProps('patient_name'),
       },
       {
-        title: 'Patient ID',
+        title: '患者ID',
         dataIndex: 'patient_id',
         key: 'patient_id',
         ...this.getColumnSearchProps('patient_id'),
       },
       {
-        title: 'Study Description',
+        title: '病例描述',
         dataIndex: 'study_description',
         key: 'study_description',
         ...this.getColumnSearchProps('study_description'),
       },
       {
-        title: 'Modality',
+        title: '影像分类',
         dataIndex: 'modality',
         key: 'modality',
         ...this.getColumnSearchProps('modality'),
       },
       {
-        title: 'Images Count',
+        title: '图像数量',
         dataIndex: 'images_count',
         key: 'images_count',
         //...this.getColumnSearchProps('images_count'),
@@ -203,49 +204,49 @@ class DicomNodesTable extends React.Component {
     ];
     const columns_series = [
       {
-        title: 'ID',
+        title: '序列ID',
         dataIndex: 'id',
         key: 'id',
         ...this.getColumnSearchProps('id'),
         render: text => (<div>            
           <Space size="middle">
-            <a>{text}</a>
-            <Button onClick={() => this.onDeleteDicomNode(text)}>Delete</Button>
+            <a>{text }</a>
+            <Button onClick={() => this.onDeleteSeries(text)}>删除</Button>
           </Space>
       </div>),
       },
       {
-        title: 'Patient Position',
+        title: '患者姿态',
         dataIndex: 'patient_position',
         key: 'patient_position',
         ...this.getColumnSearchProps('patient_position'),
       },
       {
-        title: 'Modality',
+        title: '影像分类',
         dataIndex: 'modality',
         key: 'modality',
         ...this.getColumnSearchProps('modality'),
       },
       {
-        title: 'Body Part Examined',
+        title: '扫描部位',
         dataIndex: 'body_part_examined',
         key: 'body_part_examined',
         ...this.getColumnSearchProps('body_part_examined'),
       },
       {
-        title: 'Series Number',
+        title: '序列号',
         dataIndex: 'series_number',
         key: 'series_number',
         ...this.getColumnSearchProps('series_number'),
       },
       {
-        title: 'Protocol Name',
+        title: '扫描序列名',
         dataIndex: 'protocol_name',
         key: 'protocol_name',
         ...this.getColumnSearchProps('protocol_name'),
       },
       {
-        title: 'Images Count',
+        title: '图像数量',
         dataIndex: 'images_count',
         key: 'images_count',
         //...this.getColumnSearchProps('images_count'),
@@ -253,9 +254,9 @@ class DicomNodesTable extends React.Component {
     ];
     const { Header, Content, Footer, Sider } = Layout;
     const { TabPane } = Tabs;
-    // console.log("patientdata");
-    // console.log(this.props.patientdata)
-    // console.log(Menu.Item.selectedKeys);
+    console.log("patientdata");
+    console.log(this.props.patientdata)
+    console.log(Menu.Item.selectedKeys);
     return (
         <div>
            <Layout>
@@ -263,38 +264,51 @@ class DicomNodesTable extends React.Component {
               <div className="logo" />
               <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['3']}>
                 <Menu.Item key="1" >
-                  <Link to='/patients'>Patients</Link>
+                  <Link to='/patients'>病人</Link>
                 </Menu.Item>
                 <Menu.Item key="2" >
-                  <Link to='/studies'>Studies</Link>
+                  <Link to='/studies'>病例</Link>
                 </Menu.Item>
                 <Menu.Item key="3" >
-                  <Link to='/api/dcm/upload'>DICOMServer</Link>
+                  <Link to='/api/dcm/upload'>数据库管理</Link>
                 </Menu.Item>
               </Menu>
              </Header>
              <Content className="site-layout" style={{ padding: '0 50px', marginTop: 64 }}>
                 <Tabs defaultActiveKey="1">
                     <TabPane tab={<span><UploadOutlined />
-                      UPLOAD
+                      上传
                       </span>} key="1">
-                        <Upload>
+                        <div>
+                        {
+                        this.props.isPending ? (
+                            <Dimmer>
+                                <Loader>
+                                   文件上传...
+                                </Loader>
+                            </Dimmer>
+                        ) : (
+                            <div/>
+                        )
+                    }
+                        </div>
+                        <Upload multiple="multiple">
                             <Button>
-                            <UploadOutlined onClick={this.onAddDicomNode}/> Upload
+                            <UploadOutlined onClick={this.onAddDicomNode}/> 点击上传文件
                             </Button>
                         </Upload>
                     </TabPane>
                     <TabPane tab={<span><DeleteOutlined />
-                      DELETE
+                      删除
                     </span>} key="2">
                     <Tabs tabPosition={this.state.tabPosition}>
-                      <TabPane tab="Patients" key="1">
+                      <TabPane tab="病人" key="1">
                         <Table columns={columns_patients} dataSource={this.props.patientsdata} />
                       </TabPane>
-                      <TabPane tab="Studies" key="2">
+                      <TabPane tab="病例" key="2">
                         <Table columns={columns_studies} dataSource={this.props.studiesdata} />
                       </TabPane>
-                      <TabPane tab="Series" key="3">
+                      <TabPane tab="病例序列" key="3">
                         <Table columns={columns_series} dataSource={this.props.seriesdata} />
                       </TabPane>
                     </Tabs>

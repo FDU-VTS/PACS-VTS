@@ -149,6 +149,7 @@ export default class DicomService {
         fetch(
             `${SERIES_ROOT_URL}/${seriesId}/instances`
         ).then(function (response) {
+            console.log("response",response);
             if (response.status >= 200 && response.status < 300) {
                 console.log("找到的instances",response)
                 return response;
