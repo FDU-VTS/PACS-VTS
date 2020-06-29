@@ -1,2 +1,0 @@
-# Neurdicom plugin - KMeans Segmentation
- 

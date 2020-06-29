@@ -6,7 +6,7 @@ from pydicom import Dataset, Sequence
 from pydicom.multival import MultiValue
 from tornado.web import RequestHandler
 
-from apps.core.utils import DicomJsonEncoder, convert_dicom_to_img
+from apps.core.utils import DicomJsonEncoder, convert_dicom_to_img, convert_img
 
 # FORMAT = '%(asctime)-15s => %(message)s'
 # logging.basicConfig(format=FORMAT)
@@ -244,6 +244,36 @@ class BaseDicomImageHandler(BaseNeurDicomHandler):
             super(BaseDicomImageHandler, self).write(s)
         else:
             super(BaseDicomImageHandler, self).write(chunk)
+
+
+class BaseDicomConverHandler(BaseNeurDicomHandler):
+    """
+    Extract image from DICOM, convert to usual image format and write as response
+    """
+
+    def set_default_headers(self):
+        super(BaseDicomConverHandler, self).set_default_headers()
+        self.set_header('Content-Type', 'image/jpeg')
+        self.set_header('Server', 'NeurDICOM')
+
+    def write(self, chunk, img_max, img_min):
+        if isinstance(chunk, Dataset):
+            s = convert_img(chunk, img_max, img_min)
+            self.set_header('Content-Length', len(s))
+            super(BaseDicomConverHandler, self).write(s)
+        else:
+            super(BaseDicomConverHandler, self).write(chunk)
+
+
+class PluginImageHandler(BaseNeurDicomHandler):
+    def set_default_headers(self):
+        super(PluginImageHandler, self).set_default_headers()
+        self.set_header('Content-Type', 'image/jpeg')
+        self.set_header('Server', 'NeurDICOM')
+
+    def write(self, chunk):
+        super(PluginImageHandler, self).write(chunk)
+
 
 
 class ListHandlerMixin(BaseJsonHandler):

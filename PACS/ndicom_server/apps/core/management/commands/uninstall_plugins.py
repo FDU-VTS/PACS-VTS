@@ -2,9 +2,8 @@ from importlib.util import find_spec
 from json import loads
 from urllib.request import urlopen
 
-import pip
+from pip._internal import main
 from django.core.management import BaseCommand, CommandParser
-from github import Github
 
 from apps.core.models import Plugin
 
@@ -23,16 +22,16 @@ class Command(BaseCommand):
                             help='Uninstall all plugins')
 
     def handle(self, *args, **options):
-        all_option = options.get('all', False)
+        all_option = True
         if all_option:
             self.stdout.write('Uninstall all plugins')
             for plugin in Plugin.objects.all():
-                pip.main(['uninstall', '--yes', plugin.name])
+                main(['uninstall', '--yes', plugin.name])
                 plugin.delete()
         else:
             for plugin_name in options['plugins']:
                 plugin = Plugin.objects.filter(name=plugin_name)
-                pip.main(['uninstall', '--yes', plugin.name])
+                main(['uninstall', '--yes', plugin.name])
                 plugin.delete()
                 self.stdout.write('Plugin % is uninstalled' % plugin_name)
         self.stdout.write('Uninstalling plugins completed!')

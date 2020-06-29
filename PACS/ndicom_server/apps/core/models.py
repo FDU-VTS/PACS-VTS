@@ -1,57 +1,21 @@
 import datetime
 import os
 import re
-
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.db.models import ForeignKey, OneToOneField, ManyToOneRel
-from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 from jsonfield import JSONField
 from pydicom import Dataset
 
-
 import uuid
-
-from apps.core.managers import UserManager
 
 
 def image_file_path(instance, filename):
     return os.path.join('instances', '{0}.dcm'.format(str(uuid.uuid4()).replace('-', '')))
 
 
-def plugin_file_path(plugin, filename):
-    return os.path.join('plugins', '{0}.zip'.format(str(uuid.uuid4()).replace('-', '')))
-
-
-def processed_image_path(plugin, filename):
-    return os.path.join('plugins', '{0}.zip'.format(str(uuid.uuid4()).replace('-', '')))
-
-
-class User(AbstractBaseUser, PermissionsMixin):
-    email = models.CharField(verbose_name=_('Email'), max_length=30, unique=True)
-    name = models.CharField(verbose_name=_('Name'), max_length=30)
-    surname = models.CharField(verbose_name=_('Surname'), max_length=30)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(_('Admin?'), default=False)
-    date_joined = models.DateTimeField(default=now())
-
-    objects = UserManager()
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
-
-    class Meta:
-        db_table = 'users'
-        verbose_name = _('User')
-        verbose_name_plural = _('Users')
-
-    def get_short_name(self):
-        return '%s %s' % (self.name, self.surname)
-
-    def get_full_name(self):
-        return '%s' % self.name
+def processed_result_path(instance, filename):
+    return os.path.join('results', instance.filename)
 
 
 TAGS_TO_FIELDS = {
@@ -244,14 +208,8 @@ class Plugin(models.Model):
     display_name = models.CharField(verbose_name=_('Display Name'), default='', max_length=150)
     version = models.CharField(verbose_name=_('Version'), max_length=20)
     author = models.CharField(verbose_name=_('Author'), max_length=100, blank=True, null=True)
-    info = models.CharField(verbose_name=_('Information'), max_length=500, blank=True, null=True)
-    docs = models.TextField(verbose_name=_('Documentation'), max_length=500, blank=True, null=True)
-    modalities = JSONField(verbose_name=_('Modalities'), blank=True, null=True)
-    tags = JSONField(verbose_name=_('Tags'), blank=True, null=True)
-    params = JSONField(verbose_name=_('Parameters'), blank=True, null=True)
     result = JSONField(verbose_name=_('Result'))
     type = models.CharField(verbose_name=_('Type'), default='ANALYZER', max_length=40)
-    plugin = models.FileField(upload_to=plugin_file_path, null=True, blank=True)
     is_installed = models.BooleanField(verbose_name=_('Is installed'), default=False)
 
 
@@ -259,7 +217,9 @@ class ProcessingResult(models.Model):
     class Meta:
         db_table = 'processing_results'
 
-    expire_date = models.DateTimeField()
-    image = models.FileField(upload_to=processed_image_path, verbose_name=_('Image'), null=True, blank=True)
-    json = JSONField(verbose_name=_('JSON'))
-    session_token = models.CharField(max_length=255)
+    expire_date = models.DateTimeField(auto_now_add=True)
+    filename = models.CharField(verbose_name=_('Name'), max_length=100, unique=True, null=False)
+    result = models.FileField(upload_to=processed_result_path, verbose_name=_('result'))
+    is_image = models.BooleanField(verbose_name=_('Is image'), default=True)
+    is_json = models.BooleanField(verbose_name=_('Is json'), default=False)
+    instance = models.ForeignKey('core.Instance', related_name='processing_results', on_delete=models.CASCADE)

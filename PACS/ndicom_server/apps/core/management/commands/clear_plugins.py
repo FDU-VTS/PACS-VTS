@@ -8,6 +8,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for plugin in Plugin.objects.all():
-            plugin.plugin.delete()
             plugin.delete()
         self.stdout.write('Completed!')

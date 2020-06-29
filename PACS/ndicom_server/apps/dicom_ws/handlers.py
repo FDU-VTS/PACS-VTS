@@ -2,21 +2,16 @@ import pynetdicom as netdicom
 from pydicom.uid import *
 from pydicom import read_file, FileDataset
 from tornado import gen
-from tornado.httpclient import AsyncHTTPClient
-from tornado.web import asynchronous
-
 from apps.core.handlers import *
 from apps.core.utils import *
 from apps.dicom_ws.serializers import *
 import pip
-import os
 
 ECHO_SUCCESS = 0x0000
 REPO_URL = 'git+git://github.com/reactmed/neurdicom-plugins.git'
 
 
 # GET /api/patients
-@required_auth(methods=['GET'])
 class PatientListHandler(ListHandler):
     """
     Return all patients stored in database
@@ -36,7 +31,6 @@ class PatientListHandler(ListHandler):
 
 
 # GET /api/patients/:id
-@required_auth(methods=['GET', 'DELETE'])
 class PatientDetailHandler(RetrieveDestroyHandler):
     """
     Return patient by specified id
@@ -57,7 +51,6 @@ class PatientDetailHandler(RetrieveDestroyHandler):
 
 
 # GET /api/patients/:id/studies
-@required_auth(methods=['GET'])
 class PatientStudiesHandler(ListHandler):
     """ Get patient's studies
 
@@ -81,7 +74,6 @@ class PatientStudiesHandler(ListHandler):
 
 
 # GET /api/studies
-@required_auth(methods=['GET'])
 class StudyListHandler(ListHandler):
     """ Get studies
 
@@ -100,7 +92,6 @@ class StudyListHandler(ListHandler):
 
 
 # GET /api/studies/:id
-@required_auth(methods=['GET', 'DELETE'])
 class StudyDetailHandler(RetrieveDestroyHandler):
     """ Find study by id
 
@@ -119,7 +110,6 @@ class StudyDetailHandler(RetrieveDestroyHandler):
 
 
 # GET /api/studies/:id/series
-@required_auth(methods=['GET'])
 class StudySeriesHandler(ListHandler):
     """ Find series by study
 
@@ -141,7 +131,6 @@ class StudySeriesHandler(ListHandler):
 
 
 # GET /api/series
-@required_auth(methods=['GET'])
 class SeriesListHandler(ListHandler):
     """ Find series
 
@@ -159,7 +148,6 @@ class SeriesListHandler(ListHandler):
 
 
 # GET /api/series/:id
-@required_auth(methods=['GET', 'DELETE'])
 class SeriesDetailHandler(RetrieveDestroyHandler):
     """ Find series by id
 
@@ -178,7 +166,6 @@ class SeriesDetailHandler(RetrieveDestroyHandler):
 
 
 # GET /api/series/:id/instances
-@required_auth(methods=['GET'])
 class SeriesInstancesHandler(ListHandler):
     """ Find instances by series
 
@@ -199,8 +186,21 @@ class SeriesInstancesHandler(ListHandler):
         return Instance.objects.filter(series_id=self.path_params['series_id']).order_by('instance_number')
 
 
+class SeriesProcessHandler(BaseNeurDicomHandler):
+    def post(self, series_id, by_plugin_id, *args, **kwargs):
+        instance_query = Instance.objects.filter(series_id=series_id)
+        plugin = Plugin.objects.get(pk=by_plugin_id)
+        params = self.request.arguments
+        processor = ImageProcessor(plugin)
+        for instance in instance_query:
+            print(type(instance))
+            rt = processor.process(instance, **params)
+            res_name = str(plugin.name) + str(instance.pk) + '.jpeg'
+            if not ProcessingResult.objects.filter(filename=res_name).exists():
+                img = convert_array_to_img(rt, res_name, instance)
+
+
 # GET /api/instances
-@required_auth(methods=['GET'])
 class InstanceListHandler(ListHandler):
     """ Find instances
 
@@ -217,15 +217,14 @@ class InstanceListHandler(ListHandler):
     serializer_class = InstanceSerializer
 
 
-@required_auth(methods=['POST'])
-class InstanceUploadHandler(BaseNeurDicomHandler):
+class DcmUploadHander(BaseNeurDicomHandler):
     def post(self, *args, **kwargs):
-        for name in self.request.files:
+        fileDict = self.request.files
+        for name in fileDict:
             DicomSaver.save(BytesIO(self.request.files[name][0]['body']))
 
 
 # GET /api/instances/:id
-@required_auth(methods=['GET', 'DELETE'])
 class InstanceDetailHandler(RetrieveDestroyHandler):
     """ Find instance by id
 
@@ -243,7 +242,6 @@ class InstanceDetailHandler(RetrieveDestroyHandler):
 
 
 # POST /api/instances/:id/process/by_plugin/:id/json
-@required_auth(methods=['POST'])
 class InstanceJsonProcessHandler(BaseJsonHandler):
     """ Process an instances with specified plugin (or filter)
 
@@ -257,6 +255,7 @@ class InstanceJsonProcessHandler(BaseJsonHandler):
         - 401 - Not authorized user
         - 403 - User has not permissions for retrieving patients
     """
+
     @gen.coroutine
     def post(self, instance_id, by_plugin_id, *args, **kwargs):
         instance = Instance.objects.get(pk=instance_id)
@@ -264,7 +263,7 @@ class InstanceJsonProcessHandler(BaseJsonHandler):
         params = self.request.arguments
         with ImageProcessor(plugin) as processor:
             result = processor.process(instance, **params)
-        res_name = str(plugin.name)+str(instance_id)
+        res_name = str(plugin.name) + str(instance_id)
         if plugin.result['type'] == 'JSON':
             if isinstance(result, dict):
                 result = json.dumps(result)
@@ -274,8 +273,7 @@ class InstanceJsonProcessHandler(BaseJsonHandler):
 
 
 # POST /api/instances/:id/process/by_plugin/:id/image
-@required_auth(methods=['POST'])
-class InstanceImgProcessHandler(BaseDicomImageHandler):
+class InstanceImgProcessHandler(PluginImageHandler):
     """ Process an instances with specified plugin (or filter)
 
     Success
@@ -288,24 +286,28 @@ class InstanceImgProcessHandler(BaseDicomImageHandler):
         - 401 - Not authorized user
         - 403 - User has not permissions for retrieving patients
     """
+
     @gen.coroutine
-    def post(self, instance_id, by_plugin_id, *args, **kwargs):
+    def get(self, instance_id, by_plugin_id, *args, **kwargs):
         instance = Instance.objects.get(pk=instance_id)
         plugin = Plugin.objects.get(pk=by_plugin_id)
         params = self.request.arguments
         with ImageProcessor(plugin) as processor:
-            result = processor.process(instance, **params)
-        res_name = str(plugin.name)+str(instance_id)
+            rt = processor.process(instance, **params)
+        res_name = str(plugin.name) + str(instance_id) + '.jpeg'
         if plugin.result['type'] == 'IMAGE':
-            print(res_name)
-            result = convert_array_to_img(result, res_name)
-            yield self.write(result)
+            if not ProcessingResult.objects.filter(filename=res_name).exists():
+                img = convert_array_to_img(rt, res_name, instance)
+            else:
+                res = ProcessingResult.objects.get(filename=res_name)
+                rt = open(res.result.path, 'rb')
+                img = rt.read()
+            yield self.write(img)
         else:
             yield self.send_error(500, message='result type is not image')
 
 
 # GET /api/instances/:id/tags
-@required_auth(methods=['GET'])
 class InstanceTagsHandler(BaseDicomJsonHandler):
     """ Find instance tags
 
@@ -327,7 +329,6 @@ class InstanceTagsHandler(BaseDicomJsonHandler):
 
 
 # GET /api/instances/:id/image
-@required_auth(methods=['GET'])
 class InstanceImageHandler(BaseDicomImageHandler):
     """ Find instance image
 
@@ -341,15 +342,35 @@ class InstanceImageHandler(BaseDicomImageHandler):
         - 403 - User has not permissions for retrieving instances
     """
 
-    @gen.coroutine
     def get(self, instance_id, *args, **kwargs):
         instance = Instance.objects.get(pk=instance_id)
         ds = read_file(instance.image.path)
-        yield BaseDicomImageHandler.write(self, ds)
+        return self.write(ds)
+
+
+# GET /api/instances/:id/limit/:id/mid/:id
+class InstanceConvertHandler(BaseDicomConverHandler):
+    """ Find instance image
+
+    Success
+
+        - 200 - Instance image was found
+
+    Failure
+        - 404 - Instance not found
+        - 401 - Not authorized user
+        - 403 - User has not permissions for retrieving instances
+    """
+
+    def get(self, instance_id, limit, mid, *args, **kwargs):
+        instance = Instance.objects.get(pk=instance_id)
+        ds = read_file(instance.image.path)
+        img_max = int(mid) + (int(limit)/2)
+        img_min = int(mid) - (int(limit)/2)
+        return self.write(ds, img_max, img_min)
 
 
 # GET /api/instances/:id/raw
-@required_auth(methods=['GET'])
 class InstanceRawHandler(BaseBytesHandler):
     """ Find instance image
 
@@ -363,7 +384,6 @@ class InstanceRawHandler(BaseBytesHandler):
             - 403 - User has not permissions for retrieving instances
     """
 
-    @gen.coroutine
     def get(self, instance_id, *args, **kwargs):
         img_format = self.get_query_argument('format', 'LUM_8')
         instance = Instance.objects.get(pk=instance_id)
@@ -374,9 +394,6 @@ class InstanceRawHandler(BaseBytesHandler):
 
 
 # GET /api/plugins
-
-
-@required_auth(methods=['GET'])
 class PluginListHandler(ListHandler):
     """ Find plugins
 
@@ -398,9 +415,6 @@ class PluginListHandler(ListHandler):
 
 
 # GET /api/plugins/:id
-
-
-@required_auth(methods=['GET', 'DELETE'])
 class PluginDetailHandler(RetrieveDestroyHandler):
     """ Find plugin by id
 
@@ -440,33 +454,6 @@ class DICOMServer(netdicom.AE):
     def on_c_echo(self, context, info):
         logger.info('C-Echo succeeded')
         return 0x0000
-
-    # def on_c_find(self, ds: Dataset, context, info):
-    #     logger.info('C-Find processing request')
-    #     logger.info(ds)
-    #     qr_level = ds.QueryRetrieveLevel
-    #     res_ds = Dataset()
-    #     res_ds.QueryRetrieveLevel = ds.QueryRetrieveLevel
-    #     res_ds.RetrieveAETitle = 'NEURDICOM'
-    #     res_ds.PatientName = ds.get('PatientName', 'John Doe')
-    #     status_ds = Dataset()
-    #     status_ds.Status = 0x0000
-    #     yield status_ds, res_ds
-    #
-    # def on_c_move(self, ds: Dataset, move_aet, context, info):
-    #     logger.info('C-Find processing request')
-    #     logger.info(ds)
-    #
-    # def on_c_get(self, ds: Dataset, context, info):
-    #     logger.info('C-Get processing request')
-    #     logger.info(ds)
-    #     res_ds = Dataset()
-    #     res_ds.QueryRetrieveLevel = ds.QueryRetrieveLevel
-    #     res_ds.RetrieveAETitle = 'NEURDICOM'
-    #     res_ds.PatientName = ds.get('PatientName', 'John Doe')
-    #     status_ds = Dataset()
-    #     status_ds.Status = 0xFF00
-    #     yield status_ds, res_ds
 
     def on_c_store(self, ds: Dataset, context, info):
         logger.info('C-Store processing')

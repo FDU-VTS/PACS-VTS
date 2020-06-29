@@ -17,11 +17,11 @@ from neurdicom.urls import *
 import neurdicom.settings as settings
 from tornado.options import options, define, parse_command_line
 from apps.dicom_ws.handlers import *
-from apps.users.handlers import *
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
 import tornado.wsgi
+
 define('aet', type=str, default='NEURDICOM')
 define('rest_port', type=int, default=8080)
 define('dicom_port', type=int, default=4242)
@@ -46,6 +46,7 @@ def main():
             (SERIES_INSTANCES_URL, SeriesInstancesHandler),
             (SERIES_DETAIL_URL, SeriesDetailHandler),
             (SERIES_LIST_URL, SeriesListHandler),
+            (SERIES_PROCESS_URL, SeriesProcessHandler),
 
             # Instances
             (INSTANCE_IMG_PROCESS_URL, InstanceImgProcessHandler),
@@ -55,12 +56,12 @@ def main():
             (INSTANCE_RAW_URL, InstanceRawHandler),
             (INSTANCE_DETAIL_URL, InstanceDetailHandler),
             (INSTANCE_LIST_URL, InstanceListHandler),
-            (INSTANCE_UPLOAD_URL, InstanceUploadHandler),
+            (INSTANCE_CONVERT_URL, InstanceConvertHandler),
+            (DCM_UPLOAD_URL, DcmUploadHander),
 
             # Plugins
             (PLUGIN_DETAIL_URL, PluginDetailHandler),
             (PLUGIN_LIST_URL, PluginListHandler),
-
 
             # Media download
             (MEDIA_URL, tornado.web.StaticFileHandler, {'path': 'media'})

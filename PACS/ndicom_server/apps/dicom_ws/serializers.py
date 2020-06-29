@@ -92,35 +92,15 @@ class InstanceDetailSerializer(ModelSerializer):
 
 
 class PluginSerializer(ModelSerializer):
-    params = SerializerMethodField()
     result = SerializerMethodField()
-    modalities = SerializerMethodField()
-    tags = SerializerMethodField()
 
-    def get_tags(self, plugin: Plugin):
-        if plugin.tags:
-            return list(plugin.tags)
-        return []
-
-    def get_params(self, plugin: Plugin):
-        if plugin.params:
-            return dict(plugin.params)
-        return None
+    class Meta:
+        model = Plugin
+        fields = (
+            'id', 'author', 'name', 'display_name', 'version', 'result', 'type', 'is_installed'
+        )
 
     def get_result(self, plugin: Plugin):
         if plugin.result:
             return dict(plugin.result)
         return None
-
-    def get_modalities(self, plugin: Plugin):
-        if plugin.result:
-            return list(plugin.modalities)
-        return None
-
-    class Meta:
-        model = Plugin
-        fields = (
-            'id', 'author', 'name', 'display_name', 'version', 'tags',
-            'info', 'docs', 'params', 'result', 'type',
-            'modalities', 'is_installed'
-        )
