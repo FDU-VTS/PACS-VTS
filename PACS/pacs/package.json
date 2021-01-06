@@ -10,7 +10,7 @@
     "@typescript-eslint/parser": "^2.10.0",
     "ami": "0.0.2",
     "antd": "^4.2.4",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "babel-eslint": "10.1.0",
     "babel-jest": "^24.9.0",
     "babel-loader": "8.1.0",
